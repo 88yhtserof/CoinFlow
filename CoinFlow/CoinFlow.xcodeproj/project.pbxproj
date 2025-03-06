@@ -14,7 +14,7 @@
 		1452284C2D7998FC00006917 /* Exceptions for "CoinFlow" folder in "CoinFlow" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Resources/Info.plist,
 			);
 			target = 145228392D7998FB00006917 /* CoinFlow */;
 		};
@@ -147,7 +147,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ZQV4ZDQNW5;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = CoinFlow/Info.plist;
+				INFOPLIST_FILE = CoinFlow/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "임윤휘";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -180,7 +180,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ZQV4ZDQNW5;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = CoinFlow/Info.plist;
+				INFOPLIST_FILE = CoinFlow/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "임윤휘";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
