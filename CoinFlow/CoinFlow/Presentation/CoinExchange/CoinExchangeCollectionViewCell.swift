@@ -28,6 +28,7 @@ final class CoinExchangeCollectionViewCell: UICollectionViewCell {
     var changeRate: Double = 0.0 {
         didSet {
             changeRateLabel.text = CoinNumberFormatter.changeRate(number: changeRate).string
+            configureChangeLabelColor()
         }
     }
     
@@ -59,6 +60,20 @@ final class CoinExchangeCollectionViewCell: UICollectionViewCell {
 
 //MARK: - Configuration
 private extension CoinExchangeCollectionViewCell {
+    
+    func configureChangeLabelColor() {
+        changeStckView.arrangedSubviews
+            .compactMap{ $0 as? UILabel }
+            .forEach{
+                if changeRate > 0 {
+                    $0.textColor = CoinFlowColor.rise
+                } else if changeRate < 0 {
+                    $0.textColor = CoinFlowColor.fall
+                } else {
+                    $0.textColor = CoinFlowColor.title
+                }
+            }
+    }
     
     func configureView() {
         marketLabel.text = "코인"
