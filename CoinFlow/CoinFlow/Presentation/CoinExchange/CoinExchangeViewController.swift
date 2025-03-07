@@ -27,6 +27,7 @@ private extension CoinExchangeViewController {
     func configureView() {
         view.backgroundColor = CoinFlowColor.background
         
+        navigationItem.leftBarButtonItem = TitleBarButtonItem(title: "거래소")
     }
     
     func configureHierarchy() {
