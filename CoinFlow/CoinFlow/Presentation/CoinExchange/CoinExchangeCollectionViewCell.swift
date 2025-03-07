@@ -11,7 +11,7 @@ final class CoinExchangeCollectionViewCell: UICollectionViewCell {
     
     static let identifier = String(describing: CoinExchangeCollectionViewCell.self)
     
-    let marketLabel = UILabel()
+    private let marketLabel = UILabel()
     private let tradePriceLabel = UILabel()
     private let changeRateLabel = UILabel()
     private let changePriceLabel = UILabel()
@@ -56,6 +56,13 @@ final class CoinExchangeCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func configure(with value: MarketData) {
+        marketLabel.text = value.market
+        tradePrice = value.tradePrice
+        changeRate = value.signedChangeRate
+        changePrice = value.signedChangePrice
+        accTradePrice = value.accTradePrice
+    }
 }
 
 //MARK: - Configuration

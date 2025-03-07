@@ -34,11 +34,7 @@ final class CoinExchangeViewController: UIViewController {
         
         output.marketList
             .drive(collectionView.rx.items(cellIdentifier: CoinExchangeCollectionViewCell.identifier, cellType: CoinExchangeCollectionViewCell.self)){ item, element, cell in
-                cell.marketLabel.text = element.market
-                cell.tradePrice = element.tradePrice
-                cell.changeRate = element.signedChangeRate
-                cell.changePrice = element.signedChangePrice
-                cell.accTradePrice = element.accTradePrice
+                cell.configure(with: element)
             }
             .disposed(by: disposeBag)
     }
