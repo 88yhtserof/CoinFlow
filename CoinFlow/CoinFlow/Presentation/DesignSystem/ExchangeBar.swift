@@ -36,15 +36,21 @@ private extension ExchangeBar {
         backgroundColor = CoinFlowColor.subBackground
         
         titleLabel.text = "코인"
-        titleLabel.font = .systemFont(ofSize: 15, weight: .bold)
+        titleLabel.font = .systemFont(ofSize: 12, weight: .bold)
+        
+        toggleStackView.arrangedSubviews
+            .compactMap{ $0 as? SortToggleControl }
+            .forEach{ toggle in
+                toggle.font = .systemFont(ofSize: 12, weight: .bold)
+            }
         
         tradePriceToggle.title = "현재가"
         changePriceToggle.title = "전일대비"
         accTradePriceToggle.title = "거래대금"
         
         toggleStackView.axis = .horizontal
-        toggleStackView.spacing = 14
-        toggleStackView.distribution = .equalSpacing
+        toggleStackView.distribution = .equalCentering
+        toggleStackView.alignment = .center
     }
     
     func configureHierarchy() {
@@ -62,9 +68,10 @@ private extension ExchangeBar {
         }
         
         toggleStackView.snp.makeConstraints { make in
+            make.width.equalTo(250)
             make.verticalEdges.equalToSuperview().inset(verticalInset)
             make.trailing.equalToSuperview().inset(horizontalInset)
-            make.leading.lessThanOrEqualTo(titleLabel.snp.trailing).offset(120)
+            make.leading.greaterThanOrEqualTo(titleLabel.snp.trailing).offset(50)
         }
     }
 }

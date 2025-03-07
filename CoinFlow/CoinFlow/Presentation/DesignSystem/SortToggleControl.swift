@@ -27,6 +27,11 @@ final class SortToggleControl: UIControl {
         set { titleLabel.text = newValue }
     }
     
+    var font: UIFont? {
+        get { titleLabel.font }
+        set { titleLabel.font = newValue }
+    }
+    
     private var sortNumber: Int = SortType.none.rawValue {
         didSet {
             sortType = SortType(rawValue: sortNumber)!
@@ -73,7 +78,7 @@ private extension SortToggleControl {
     func configureView() {
         
         titleLabel.text = "정렬"
-        titleLabel.font = .systemFont(ofSize: 15, weight: .bold)
+        titleLabel.textColor = CoinFlowColor.title
         
         ascImageView.image = UIImage(systemName: "arrowtriangle.up.fill")
         ascImageView.tintColor = CoinFlowColor.subtitle
@@ -84,7 +89,7 @@ private extension SortToggleControl {
         descImageView.contentMode = .scaleAspectFill
         
         sortStackView.axis = .vertical
-        sortStackView.spacing = 1
+        sortStackView.spacing = 2
         sortStackView.distribution = .fillEqually
     }
     
@@ -93,15 +98,16 @@ private extension SortToggleControl {
     }
     
     func configureConstraints() {
+        let height: CGFloat = 15
         
         titleLabel.snp.makeConstraints { make in
             make.verticalEdges.leading.equalToSuperview()
-            make.height.equalTo(18)
+            make.height.equalTo(height)
         }
         
         sortStackView.snp.makeConstraints { make in
             make.height.equalTo(titleLabel)
-            make.width.equalTo(10)
+            make.width.equalTo(height / 2.0)
             make.leading.equalTo(titleLabel.snp.trailing)
             make.trailing.equalToSuperview()
         }
