@@ -7,10 +7,16 @@
 
 import UIKit
 
+import RxSwift
+import RxCocoa
+
 final class CoinExchangeViewController: UIViewController {
     
     private let exchangeBar = ExchangeBar()
-    private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
+    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout())
+    
+    private let viewModel = CoinExchangeViewModel()
+    private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,6 +24,23 @@ final class CoinExchangeViewController: UIViewController {
         configureHierarchy()
         configureConstraints()
         configureView()
+        bind()
+    }
+    
+    private func bind() {
+        
+        let input = CoinExchangeViewModel.Input()
+        let output = viewModel.transform(input: input)
+        
+        output.marketList
+            .drive(collectionView.rx.items(cellIdentifier: CoinExchangeCollectionViewCell.identifier, cellType: CoinExchangeCollectionViewCell.self)){ item, element, cell in
+                cell.marketLabel.text = element.market
+                cell.tradePrice = element.tradePrice
+                cell.changeRate = element.signedChangeRate
+                cell.changePrice = element.signedChangePrice
+                cell.accTradePrice = element.accTradePrice
+            }
+            .disposed(by: disposeBag)
     }
 }
 
@@ -26,18 +49,37 @@ private extension CoinExchangeViewController {
     
     func configureView() {
         view.backgroundColor = CoinFlowColor.background
-        
         navigationItem.leftBarButtonItem = TitleBarButtonItem(title: "거래소")
+        
+        collectionView.register(CoinExchangeCollectionViewCell.self, forCellWithReuseIdentifier: CoinExchangeCollectionViewCell.identifier)
+        collectionView.allowsSelection = false
     }
     
     func configureHierarchy() {
-        view.addSubviews([exchangeBar/*, collectionView*/])
+        view.addSubviews([exchangeBar, collectionView])
     }
     
     func configureConstraints() {
         
         exchangeBar.snp.makeConstraints { make in
             make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(exchangeBar.snp.bottom)
+            make.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
+    }
+}
+
+//MARK: - CollectionView Layout
+private extension CoinExchangeViewController {
+    func layout() -> UICollectionViewLayout {
+        let configuration = UICollectionLayoutListConfiguration(appearance: .plain)
+        return UICollectionViewCompositionalLayout { sectionIndexColor, environment in
+            let section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: environment)
+            section.interGroupSpacing = 10
+            return section
         }
     }
 }
