@@ -22,6 +22,11 @@ final class SortToggleControl: UIControl {
     private let descImageView = UIImageView()
     private lazy var sortStackView = UIStackView(arrangedSubviews: [ascImageView, descImageView])
     
+    var title: String? {
+        get { titleLabel.text }
+        set { titleLabel.text = newValue }
+    }
+    
     private var sortNumber: Int = SortType.none.rawValue {
         didSet {
             sortType = SortType(rawValue: sortNumber)!

@@ -9,7 +9,7 @@ import UIKit
 
 final class CoinExchangeViewController: UIViewController {
     
-    private let sortToggleButton = SortToggleControl()
+    private let exchangeBar = ExchangeBar()
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
     
     override func viewDidLoad() {
@@ -27,17 +27,16 @@ private extension CoinExchangeViewController {
     func configureView() {
         view.backgroundColor = CoinFlowColor.background
         
-        
     }
     
     func configureHierarchy() {
-        view.addSubviews([sortToggleButton/*, collectionView*/])
+        view.addSubviews([exchangeBar/*, collectionView*/])
     }
     
     func configureConstraints() {
         
-        sortToggleButton.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+        exchangeBar.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
         }
     }
 }
