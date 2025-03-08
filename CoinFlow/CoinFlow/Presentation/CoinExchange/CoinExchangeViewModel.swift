@@ -18,12 +18,10 @@ final class CoinExchangeViewModel: BaseViewModel {
     }
     
     struct Output {
-        let marketList: Driver<[MarketTickerResponse]>
+        let sortedMarketList: Driver<[MarketTickerResponse]>
     }
     
     var disposeBag = DisposeBag()
-    
-    private var marketList: [MarketTickerResponse] = []
     
     init() {
         print("CoinExchangeViewModel init")
@@ -35,7 +33,9 @@ final class CoinExchangeViewModel: BaseViewModel {
     
     func transform(input: Input) -> Output {
         
-        let marketList = BehaviorRelay(value: marketList.sorted(by: { $0.acc_trade_price > $1.acc_trade_price }))
+        let selectedSort = BehaviorRelay<ExchangeBar.Sort>(value: .accTradePrice(.desc))
+        let marketList = BehaviorRelay<[MarketTickerResponse]>(value: [])
+        let sortedMarketList = BehaviorRelay<[MarketTickerResponse]>(value: [])
         
         input.loadView
             .withUnretained(self)
@@ -56,45 +56,29 @@ final class CoinExchangeViewModel: BaseViewModel {
             .bind(to: marketList)
             .disposed(by: disposeBag)
         
-        
-        input.changeSort
-            .withLatestFrom(marketList){ ($0, $1) }
-            .map { sort, list in
-                switch sort {
-                case .tradePrice(let order):
-                    switch order {
-                    case .none:
-                        break
-                    case .desc:
-                        return list.sorted(by: { $0.trade_price > $1.trade_price })
-                    case .asc:
-                        return list.sorted(by: { $0.trade_price < $1.trade_price })
-                    }
-                case .changePrice(let order):
-                    switch order {
-                    case .none:
-                        break
-                    case .desc:
-                        return list.sorted(by: { $0.signed_change_rate > $1.signed_change_rate })
-                    case .asc:
-                        return list.sorted(by: { $0.signed_change_rate < $1.signed_change_rate })
-                    }
-                case .accTradePrice(let order):
-                    switch order {
-                    case .none:
-                        break
-                    case .desc:
-                        return list.sorted(by: { $0.acc_trade_price > $1.acc_trade_price })
-                    case .asc:
-                        return list.sorted(by: { $0.acc_trade_price < $1.acc_trade_price })
-                    }
-                }
-                return list.sorted(by: { $0.acc_trade_price > $1.acc_trade_price })
+        marketList
+            .withLatestFrom(selectedSort){ ($1, $0) }
+            .withUnretained(self){ ($0, $1.0, $1.1) }
+            .map { value in
+                let (owner, sort, list) = value
+                return owner.sortedTickers(by: sort, with: list)
             }
-            .bind(to: marketList)
+            .bind(to: sortedMarketList)
             .disposed(by: disposeBag)
         
-        return Output(marketList: marketList.asDriver())
+        
+        input.changeSort
+            .withLatestFrom(sortedMarketList){ ($0, $1) }
+            .withUnretained(self){ ($0, $1.0, $1.1) }
+            .map { value in
+                let (owner, sort, list) = value
+                selectedSort.accept(sort)
+                return owner.sortedTickers(by: sort, with: list)
+            }
+            .bind(to: sortedMarketList)
+            .disposed(by: disposeBag)
+        
+        return Output(sortedMarketList: sortedMarketList.asDriver())
     }
     
     func requestMarketTicker() -> Single<[MarketTickerResponse]> {
@@ -104,5 +88,38 @@ final class CoinExchangeViewModel: BaseViewModel {
                 print("Error", error)
                 return Single.just([])
             }
+    }
+    
+    func sortedTickers(by sort: ExchangeBar.Sort, with list: [MarketTickerResponse]) -> [MarketTickerResponse] {
+        switch sort {
+        case .tradePrice(let order):
+            switch order {
+            case .none:
+                break
+            case .desc:
+                return list.sorted(by: { $0.trade_price > $1.trade_price })
+            case .asc:
+                return list.sorted(by: { $0.trade_price < $1.trade_price })
+            }
+        case .changePrice(let order):
+            switch order {
+            case .none:
+                break
+            case .desc:
+                return list.sorted(by: { $0.signed_change_rate > $1.signed_change_rate })
+            case .asc:
+                return list.sorted(by: { $0.signed_change_rate < $1.signed_change_rate })
+            }
+        case .accTradePrice(let order):
+            switch order {
+            case .none:
+                break
+            case .desc:
+                return list.sorted(by: { $0.acc_trade_price > $1.acc_trade_price })
+            case .asc:
+                return list.sorted(by: { $0.acc_trade_price < $1.acc_trade_price })
+            }
+        }
+        return list.sorted(by: { $0.acc_trade_price > $1.acc_trade_price })
     }
 }

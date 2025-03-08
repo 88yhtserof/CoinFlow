@@ -33,7 +33,7 @@ final class CoinExchangeViewController: UIViewController {
                                                 loadView: rx.viewWillAppear)
         let output = viewModel.transform(input: input)
         
-        output.marketList
+        output.sortedMarketList
             .drive(collectionView.rx.items(cellIdentifier: CoinExchangeCollectionViewCell.identifier,
                                            cellType: CoinExchangeCollectionViewCell.self)) { item, element, cell in
                 cell.configure(with: element)
