@@ -8,6 +8,8 @@
 import UIKit
 
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class SortToggleControl: UIControl {
     
@@ -32,11 +34,6 @@ final class SortToggleControl: UIControl {
         set { titleLabel.font = newValue }
     }
     
-    private var sortNumber: Int = SortType.none.rawValue {
-        didSet {
-            sortType = SortType(rawValue: sortNumber)!
-        }
-    }
     var sortType: SortType = .none {
         didSet {
             switch sortType {
@@ -68,7 +65,7 @@ final class SortToggleControl: UIControl {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
-        sortNumber = (sortNumber + 1) % SortType.allCases.count
+        sortType = SortType(rawValue: (sortType.rawValue + 1) % SortType.allCases.count) ?? .none
     }
 }
 
@@ -111,5 +108,15 @@ private extension SortToggleControl {
             make.leading.equalTo(titleLabel.snp.trailing)
             make.trailing.equalToSuperview()
         }
+    }
+}
+
+//MARK: - Reactive
+extension Reactive where Base: SortToggleControl {
+    
+    var valueChanged: ControlEvent<SortToggleControl.SortType> {
+        let source = controlEvent(.touchUpInside)
+            .map { _ in base.sortType }
+        return ControlEvent(events: source)
     }
 }
