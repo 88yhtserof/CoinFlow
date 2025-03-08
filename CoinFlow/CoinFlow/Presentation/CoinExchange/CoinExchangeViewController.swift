@@ -29,7 +29,8 @@ final class CoinExchangeViewController: UIViewController {
     
     private func bind() {
         
-        let input = CoinExchangeViewModel.Input(changeSort: exchangeBar.rx.sort)
+        let input = CoinExchangeViewModel.Input(changeSort: exchangeBar.rx.sort,
+                                                loadView: rx.viewWillAppear)
         let output = viewModel.transform(input: input)
         
         output.marketList

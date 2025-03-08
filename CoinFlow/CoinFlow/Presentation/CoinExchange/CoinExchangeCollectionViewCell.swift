@@ -56,12 +56,12 @@ final class CoinExchangeCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with value: MarketData) {
+    func configure(with value: MarketTickerResponse) {
         marketLabel.text = value.market
-        tradePrice = value.tradePrice
-        changeRate = value.signedChangeRate
-        changePrice = value.signedChangePrice
-        accTradePrice = value.accTradePrice
+        tradePrice = value.trade_price
+        changeRate = value.signed_change_rate
+        changePrice = value.signed_change_price
+        accTradePrice = value.acc_trade_price
     }
 }
 
