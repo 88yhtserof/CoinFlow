@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  CoinTrendingViewController.swift
 //  CoinFlow
 //
 //  Created by 임윤휘 on 3/6/25.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+final class CoinTrendingViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -15,4 +15,3 @@ class ViewController: UIViewController {
         view.backgroundColor = .white
     }
 }
-
