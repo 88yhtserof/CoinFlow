@@ -40,17 +40,22 @@ final class CoinExchangeViewModel: BaseViewModel {
         input.loadView
             .withUnretained(self)
             .flatMap { owner, _ in
-                NetworkManager.shared.request(api: UpbitNetworkAPI.ticker)
-                    .debug("upbit ticker request")
-                    .catch { error in
-                        print("Error", error)
-                        return Single.just([])
-                    }
+                owner.requestMarketTicker()
             }
             .debug("load view")
             .bind(to: marketList)
             .disposed(by: disposeBag)
-            
+        
+        Observable<Int>
+            .timer(.seconds(5), period: .seconds(5), scheduler: MainScheduler.asyncInstance)
+            .withUnretained(self)
+            .flatMap{ owner, _ in
+                owner.requestMarketTicker()
+            }
+            .debug("timer")
+            .bind(to: marketList)
+            .disposed(by: disposeBag)
+        
         
         input.changeSort
             .withLatestFrom(marketList){ ($0, $1) }
@@ -92,4 +97,12 @@ final class CoinExchangeViewModel: BaseViewModel {
         return Output(marketList: marketList.asDriver())
     }
     
+    func requestMarketTicker() -> Single<[MarketTickerResponse]> {
+        NetworkManager.shared.request(api: UpbitNetworkAPI.ticker)
+            .debug("upbit ticker request")
+            .catch { error in
+                print("Error", error)
+                return Single.just([])
+            }
+    }
 }
