@@ -7,7 +7,17 @@
 
 import UIKit
 
-final class ExchangeBar: UIView {
+import SnapKit
+import RxSwift
+import RxCocoa
+
+final class ExchangeBar: UIControl {
+    
+    enum Sort {
+        case tradePrice(SortToggleControl.SortType)
+        case changePrice(SortToggleControl.SortType)
+        case accTradePrice(SortToggleControl.SortType)
+    }
 
     private let titleLabel = UILabel()
     private let tradePriceToggle = SortToggleControl()
@@ -15,12 +25,55 @@ final class ExchangeBar: UIView {
     private let accTradePriceToggle = SortToggleControl()
     private lazy var toggleStackView = UIStackView(arrangedSubviews: [tradePriceToggle, changePriceToggle, accTradePriceToggle])
     
+    private let disposeBag = DisposeBag()
+    
+    private(set) var sort: Sort = .accTradePrice(.desc)
+    
     init() {
         super.init(frame: .zero)
         
         configureHierarchy()
         configureConstraints()
         configureView()
+        
+        tradePriceToggle.rx.valueChanged
+            .bind(with: self, onNext: { owner, sortType in
+                owner.toggleStackView.arrangedSubviews
+                    .filter{ $0 != owner.tradePriceToggle }
+                    .compactMap{ $0 as? SortToggleControl }
+                    .forEach { toggle in
+                        toggle.sortType = .none
+                    }
+                owner.sort = .tradePrice(sortType)
+                owner.sendActions(for: .valueChanged)
+            })
+            .disposed(by: disposeBag)
+        
+        changePriceToggle.rx.valueChanged
+            .bind(with: self, onNext: { owner, sortType in
+                owner.toggleStackView.arrangedSubviews
+                    .filter{ $0 != owner.changePriceToggle }
+                    .compactMap{ $0 as? SortToggleControl }
+                    .forEach { toggle in
+                        toggle.sortType = .none
+                    }
+                owner.sort = .changePrice(sortType)
+                owner.sendActions(for: .valueChanged)
+            })
+            .disposed(by: disposeBag)
+        
+        accTradePriceToggle.rx.valueChanged
+            .bind(with: self, onNext: { owner, sortType in
+                owner.toggleStackView.arrangedSubviews
+                    .filter{ $0 != owner.accTradePriceToggle }
+                    .compactMap{ $0 as? SortToggleControl }
+                    .forEach { toggle in
+                        toggle.sortType = .none
+                    }
+                owner.sort = .accTradePrice(sortType)
+                owner.sendActions(for: .valueChanged)
+            })
+            .disposed(by: disposeBag)
     }
     
     @available(*, unavailable)
@@ -73,5 +126,16 @@ private extension ExchangeBar {
             make.trailing.equalToSuperview().inset(horizontalInset)
             make.leading.greaterThanOrEqualTo(titleLabel.snp.trailing).offset(50)
         }
+    }
+}
+
+//MARK: - Reactive
+extension Reactive where Base: ExchangeBar {
+    
+    var sort: ControlEvent<ExchangeBar.Sort> {
+        let source = controlEvent(.valueChanged)
+            .map{ _ in base.sort }
+        
+        return ControlEvent(events: source)
     }
 }

@@ -29,11 +29,12 @@ final class CoinExchangeViewController: UIViewController {
     
     private func bind() {
         
-        let input = CoinExchangeViewModel.Input()
+        let input = CoinExchangeViewModel.Input(changeSort: exchangeBar.rx.sort)
         let output = viewModel.transform(input: input)
         
         output.marketList
-            .drive(collectionView.rx.items(cellIdentifier: CoinExchangeCollectionViewCell.identifier, cellType: CoinExchangeCollectionViewCell.self)){ item, element, cell in
+            .drive(collectionView.rx.items(cellIdentifier: CoinExchangeCollectionViewCell.identifier,
+                                           cellType: CoinExchangeCollectionViewCell.self)) { item, element, cell in
                 cell.configure(with: element)
             }
             .disposed(by: disposeBag)
