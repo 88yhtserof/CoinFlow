@@ -16,10 +16,13 @@ final class CoinTrendingViewModel: BaseViewModel {
     
     struct Input {
         let loadView: ControlEvent<Void>
+        let searchText: ControlProperty<String>
+        let tapSearchButton: ControlEvent<Void>
     }
     
     struct Output {
         let trendingList: Driver<([CoinTrendingViewController.Item], [CoinTrendingViewController.Item])>
+        let searchedText: Driver<String?>
     }
     
     init() {
@@ -33,6 +36,7 @@ final class CoinTrendingViewModel: BaseViewModel {
     func transform(input: Input) -> Output {
         
         let trendingList = BehaviorRelay<([CoinTrendingViewController.Item], [CoinTrendingViewController.Item])>(value: ([], []))
+        let searchedText = PublishRelay<String?>()
         
         let timer = Observable<Int>
             .timer(.seconds(10 * 60), period: .seconds(10 * 60), scheduler: MainScheduler.instance)
@@ -61,8 +65,15 @@ final class CoinTrendingViewModel: BaseViewModel {
             .bind(to: trendingList)
             .disposed(by: disposeBag)
 
+        input.tapSearchButton
+            .withLatestFrom(input.searchText)
+            .map{ $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter{ !$0.isEmpty }
+            .bind(to: searchedText)
+            .disposed(by: disposeBag)
         
-        return Output(trendingList: trendingList.asDriver())
+        return Output(trendingList: trendingList.asDriver(),
+                      searchedText: searchedText.asDriver(onErrorJustReturn: nil))
     }
 }
 

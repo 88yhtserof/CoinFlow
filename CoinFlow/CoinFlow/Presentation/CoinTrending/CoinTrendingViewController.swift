@@ -33,22 +33,28 @@ final class CoinTrendingViewController: UIViewController {
     
     private func bind() {
         
-        let input = CoinTrendingViewModel.Input(loadView: rx.viewWillAppear)
+        let input = CoinTrendingViewModel.Input(loadView: rx.viewWillAppear,
+                                                searchText: searchBar.searchTextField.rx.text.orEmpty,
+                                                tapSearchButton: searchBar.rx.searchButtonClicked)
         let output = viewModel.transform(input: input)
         
+        output.searchedText
+            .compactMap{ $0 }
+            .map { text in
+                let coinSearchVC = CoinSearchViewController()
+                return coinSearchVC
+            }
+            .drive(rx.pushViewController)
+            .disposed(by: disposeBag)
+            
         output.trendingList
             .drive(rx.updateSnapshot)
             .disposed(by: disposeBag)
-    }
-}
-
-//MARK: - Reactive
-extension Reactive where Base: CoinTrendingViewController {
-    
-    var updateSnapshot: Binder<([CoinTrendingViewController.Item], [CoinTrendingViewController.Item])> {
-        return Binder(base) { base, list in
-            base.updateSnapshot(list.0, list.1)
-        }
+        
+        searchBar.rx.searchButtonClicked
+            .map{ _ in nil }
+            .bind(to: searchBar.searchTextField.rx.text)
+            .disposed(by: disposeBag)
     }
 }
 
@@ -215,5 +221,21 @@ extension CoinTrendingViewController {
         snapshot.appendItems(searchKeywordList, toSection: .searchKeyword)
         snapshot.appendItems(nftList, toSection: .nft)
         dataSource.applySnapshotUsingReloadData(snapshot)
+    }
+}
+
+//MARK: - Reactive
+extension Reactive where Base: CoinTrendingViewController {
+    
+    var updateSnapshot: Binder<([CoinTrendingViewController.Item], [CoinTrendingViewController.Item])> {
+        return Binder(base) { base, list in
+            base.updateSnapshot(list.0, list.1)
+        }
+    }
+    
+    var pushViewController: Binder<UIViewController> {
+        return Binder(base) { base, vc in
+            base.navigationController?.pushViewController(vc, animated: true)
+        }
     }
 }

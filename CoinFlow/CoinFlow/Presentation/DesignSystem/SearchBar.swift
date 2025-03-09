@@ -8,6 +8,8 @@
 import UIKit
 
 import SnapKit
+import RxSwift
+import RxCocoa
 
 class SearchBar: UIView {
     
@@ -72,3 +74,9 @@ private extension SearchBar {
     }
 }
 
+extension Reactive where Base: SearchBar {
+    var searchButtonClicked: ControlEvent<Void> {
+        let source = base.searchTextField.rx.controlEvent(.editingDidEnd)
+        return ControlEvent(events: source)
+    }
+}
