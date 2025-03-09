@@ -34,9 +34,13 @@ final class CoinTrendingViewModel: BaseViewModel {
         
         let trendingList = BehaviorRelay<([CoinTrendingViewController.Item], [CoinTrendingViewController.Item])>(value: ([], []))
         
-        let response = input.loadView
+        let timer = Observable<Int>
+            .timer(.seconds(10 * 60), period: .seconds(10 * 60), scheduler: MainScheduler.instance)
+        
+        let response = Observable<Void>
+            .merge(input.loadView.asObservable(), timer.map{ _ in Void() })
             .withUnretained(self)
-            .flatMap { owner, _ in
+            .flatMapLatest { owner, _ in
                 owner.requestTrending()
             }
             .compactMap{ $0 }
@@ -56,6 +60,7 @@ final class CoinTrendingViewModel: BaseViewModel {
         Observable.zip(searchKeywordList, nftList)
             .bind(to: trendingList)
             .disposed(by: disposeBag)
+
         
         return Output(trendingList: trendingList.asDriver())
     }
