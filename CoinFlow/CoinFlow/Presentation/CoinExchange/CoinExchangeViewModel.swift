@@ -14,7 +14,7 @@ final class CoinExchangeViewModel: BaseViewModel {
     
     struct Input {
         let changeSort: ControlEvent<ExchangeBar.Sort>
-        let loadView: ControlEvent<Bool>
+        let loadView: ControlEvent<Void>
     }
     
     struct Output {
