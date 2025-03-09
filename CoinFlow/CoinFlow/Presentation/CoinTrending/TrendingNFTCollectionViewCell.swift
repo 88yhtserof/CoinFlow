@@ -44,6 +44,17 @@ final class TrendingNFTCollectionViewCell: UICollectionViewCell, BaseCollectionV
         let change_Percentage = Double(value.data.floor_price_in_usd_24h_percentage_change) ?? 0.0
         changeLabel.text = CoinNumberFormatter.changeRate(number: change_Percentage).string
         changeImageView.image = UIImage(systemName:  change_Percentage > 0 ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
+        
+        if change_Percentage > 0 {
+            changeLabel.textColor = CoinFlowColor.rise
+            changeImageView.tintColor = CoinFlowColor.rise
+        } else if change_Percentage < 0 {
+            changeLabel.textColor = CoinFlowColor.fall
+            changeImageView.tintColor = CoinFlowColor.fall
+        } else {
+            changeLabel.textColor = CoinFlowColor.title
+            changeImageView.tintColor = CoinFlowColor.title
+        }
     }
 }
 

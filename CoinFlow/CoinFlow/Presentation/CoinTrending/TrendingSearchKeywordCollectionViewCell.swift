@@ -45,10 +45,21 @@ final class TrendingSearchKeywordCollectionViewCell: UICollectionViewCell, BaseC
             iconImageView.kf.setImage(with: url)
         }
         
-        let change_Percentage = CoinNumberFormatter.changeRate(number: coin.item.data.price_change_percentage_24h.krw).string
-        changeLabel.text = change_Percentage
+        let change_Percentage = coin.item.data.price_change_percentage_24h.krw
+        let change_Percentage_String = CoinNumberFormatter.changeRate(number: change_Percentage).string
+        changeLabel.text = change_Percentage_String
         changeImageView.image = UIImage(systemName:  coin.item.data.price_change_percentage_24h.krw > 0 ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
         
+        if change_Percentage > 0 {
+            changeLabel.textColor = CoinFlowColor.rise
+            changeImageView.tintColor = CoinFlowColor.rise
+        } else if change_Percentage < 0 {
+            changeLabel.textColor = CoinFlowColor.fall
+            changeImageView.tintColor = CoinFlowColor.fall
+        } else {
+            changeLabel.textColor = CoinFlowColor.title
+            changeImageView.tintColor = .clear
+        }
     }
 }
 
