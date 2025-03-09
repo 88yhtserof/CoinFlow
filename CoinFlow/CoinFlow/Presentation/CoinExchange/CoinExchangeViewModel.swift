@@ -14,7 +14,7 @@ final class CoinExchangeViewModel: BaseViewModel {
     
     struct Input {
         let changeSort: ControlEvent<ExchangeBar.Sort>
-        let loadView: ControlEvent<Bool>
+        let loadView: ControlEvent<Void>
     }
     
     struct Output {
@@ -37,22 +37,16 @@ final class CoinExchangeViewModel: BaseViewModel {
         let marketList = BehaviorRelay<[MarketTickerResponse]>(value: [])
         let sortedMarketList = BehaviorRelay<[MarketTickerResponse]>(value: [])
         
-        input.loadView
+        let timer = Observable<Int>
+            .timer(.seconds(5), period: .seconds(5), scheduler: MainScheduler.asyncInstance)
+        
+        Observable<Void>
+            .merge(input.loadView.asObservable(), timer.map{_ in Void() })
             .withUnretained(self)
             .flatMap { owner, _ in
                 owner.requestMarketTicker()
             }
             .debug("load view")
-            .bind(to: marketList)
-            .disposed(by: disposeBag)
-        
-        Observable<Int>
-            .timer(.seconds(5), period: .seconds(5), scheduler: MainScheduler.asyncInstance)
-            .withUnretained(self)
-            .flatMap{ owner, _ in
-                owner.requestMarketTicker()
-            }
-            .debug("timer")
             .bind(to: marketList)
             .disposed(by: disposeBag)
         
