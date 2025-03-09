@@ -9,7 +9,7 @@ import UIKit
 
 import SnapKit
 
-final class TrendingSearchKeywordCollectionViewCell: UICollectionViewCell {
+final class TrendingSearchKeywordCollectionViewCell: UICollectionViewCell, BaseCollectionViewCell {
     
     static let identifier = String(describing: TrendingSearchKeywordCollectionViewCell.self)
     

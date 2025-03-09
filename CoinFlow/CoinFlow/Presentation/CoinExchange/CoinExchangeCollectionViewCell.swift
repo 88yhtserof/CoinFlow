@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class CoinExchangeCollectionViewCell: UICollectionViewCell {
+final class CoinExchangeCollectionViewCell: UICollectionViewCell, BaseCollectionViewCell {
     
     static let identifier = String(describing: CoinExchangeCollectionViewCell.self)
     

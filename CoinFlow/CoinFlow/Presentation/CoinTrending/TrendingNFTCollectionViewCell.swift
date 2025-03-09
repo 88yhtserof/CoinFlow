@@ -9,7 +9,7 @@ import UIKit
 
 import SnapKit
 
-final class TrendingNFTCollectionViewCell: UICollectionViewCell {
+final class TrendingNFTCollectionViewCell: UICollectionViewCell, BaseCollectionViewCell {
     
     static let identifier = String(describing: TrendingNFTCollectionViewCell.self)
     
