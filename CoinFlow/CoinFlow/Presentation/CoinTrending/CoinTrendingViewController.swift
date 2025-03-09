@@ -64,7 +64,7 @@ private extension CoinTrendingViewController {
         
         collectionView.snp.makeConstraints { make in
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
-            make.top.equalTo(searchBar.snp.bottom)
+            make.top.equalTo(searchBar.snp.bottom).offset(15)
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
@@ -74,13 +74,13 @@ private extension CoinTrendingViewController {
 private extension CoinTrendingViewController {
     func layout() -> UICollectionViewLayout {
         let configuration = UICollectionViewCompositionalLayoutConfiguration()
-        configuration.interSectionSpacing = 10
+        configuration.interSectionSpacing = 40
         return UICollectionViewCompositionalLayout(sectionProvider: sectionProviderHandler, configuration: configuration)
     }
     
     func sectionProviderHandler(sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
         guard let section = Section(rawValue: sectionIndex) else {
-            fatalError("Could not find section")
+            fatalError("Could not find section for \(sectionIndex)")
         }
         
         switch section {
@@ -95,16 +95,18 @@ private extension CoinTrendingViewController {
         let height = view.frame.height
         
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1.0 / 7.0))
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.45), heightDimension: .absolute(height / 4.0))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.45), heightDimension: .absolute(height / 3))
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-        group.interItemSpacing = .flexible(4)
+        group.interItemSpacing = .flexible(8)
         
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
         section.interGroupSpacing = 10
-        section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: -10, trailing: -10)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: -10, trailing: -10)
+        
+        section.boundarySupplementaryItems = [headerSupplementaryItem()]
         
         return section
     }
@@ -119,9 +121,17 @@ private extension CoinTrendingViewController {
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
         section.interGroupSpacing = 10
-        section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 10, trailing: 10)
+        
+        section.boundarySupplementaryItems = [headerSupplementaryItem()]
         
         return section
+    }
+    
+    func headerSupplementaryItem() -> NSCollectionLayoutBoundarySupplementaryItem {
+        let titleSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                               heightDimension: .absolute(40))
+        return NSCollectionLayoutBoundarySupplementaryItem(layoutSize: titleSize, elementKind: "title-element-kind", alignment: .top)
     }
 }
 
@@ -155,6 +165,11 @@ private extension CoinTrendingViewController {
             }
         })
         
+        let headerSupplementaryProvider = UICollectionView.SupplementaryRegistration(elementKind: "title-element-kind", handler: headerSupplementaryRegistrationHandler)
+        dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
+            return collectionView.dequeueConfiguredReusableSupplementary(using: headerSupplementaryProvider, for: indexPath)
+        }
+        
         createSnapshot([])
         collectionView.dataSource = dataSource
     }
@@ -165,6 +180,24 @@ private extension CoinTrendingViewController {
     
     func trendingNFTCellRegistrationHandler(cell: TrendingNFTCollectionViewCell, indexPath: IndexPath, item: Int) {
         
+    }
+    
+    func headerSupplementaryRegistrationHandler(supplementaryView: HeaderSupplementaryView, string: String, indexPath: IndexPath) {
+        guard let section = Section(rawValue: indexPath.section) else {
+            fatalError("Could not find section for \(indexPath.section)")
+        }
+        
+        switch section {
+        case .searchKeyword:
+            let dateLabel = UILabel()
+            dateLabel.text = "날짜"
+            dateLabel.textColor = CoinFlowColor.subtitle
+            dateLabel.font = .systemFont(ofSize: 12, weight: .regular)
+            supplementaryView.addRightAccessoryView(dateLabel)
+            supplementaryView.configure(with: "인기 검색어")
+        case .nft:
+            supplementaryView.configure(with: "인기 NFT")
+        }
     }
     
     func createSnapshot(_ items: [Item]) {
