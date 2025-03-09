@@ -34,8 +34,16 @@ final class TrendingNFTCollectionViewCell: UICollectionViewCell, BaseCollectionV
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with value: String) {
+    func configure(with value: CoingeckoTrendingNft) {
+        if let url = URL(string: value.thumb) {
+            iconImageView.kf.setImage(with: url)
+        }
         
+        nameLabel.text = value.name
+        floorPrice.text = String(value.data.floor_price)
+        let change_Percentage = Double(value.data.floor_price_in_usd_24h_percentage_change) ?? 0.0
+        changeLabel.text = CoinNumberFormatter.changeRate(number: change_Percentage).string
+        changeImageView.image = UIImage(systemName:  change_Percentage > 0 ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
     }
 }
 
@@ -46,6 +54,7 @@ private extension TrendingNFTCollectionViewCell {
         
         iconImageView.image = UIImage(systemName: "photo.circle")
         iconImageView.tintColor = CoinFlowColor.subtitle
+        iconImageView.cornerRadius(15)
         
         nameLabel.text = "COIN"
         nameLabel.textColor = CoinFlowColor.title

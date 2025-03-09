@@ -8,6 +8,7 @@
 import UIKit
 
 import SnapKit
+import Kingfisher
 
 final class TrendingSearchKeywordCollectionViewCell: UICollectionViewCell, BaseCollectionViewCell {
     
@@ -15,10 +16,10 @@ final class TrendingSearchKeywordCollectionViewCell: UICollectionViewCell, BaseC
     
     private let rankLabel = UILabel()
     private let iconImageView = UIImageView()
-    private let nameLabel = UILabel()
     private let symbolLabel = UILabel()
-    private lazy var nameStackView = UIStackView(arrangedSubviews: [nameLabel, symbolLabel])
-    private let changeImageView = UIImageView()
+    private let nameLabel = UILabel()
+    private lazy var nameStackView = UIStackView(arrangedSubviews: [symbolLabel, nameLabel])
+    private var changeImageView = UIImageView()
     private let changeLabel = UILabel()
     private lazy var changeStackView = UIStackView(arrangedSubviews: [changeImageView, changeLabel])
     
@@ -34,8 +35,20 @@ final class TrendingSearchKeywordCollectionViewCell: UICollectionViewCell, BaseC
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with value: String) {
-        rankLabel.text = value
+    func configure(with value: (Int, CoingeckoTrendingCoin)) {
+        let (rank, coin) = value
+        rankLabel.text = String(rank + 1)
+        symbolLabel.text = coin.item.symbol
+        nameLabel.text = coin.item.name
+        
+        if let url = URL(string: coin.item.small) {
+            iconImageView.kf.setImage(with: url)
+        }
+        
+        let change_Percentage = CoinNumberFormatter.changeRate(number: coin.item.data.price_change_percentage_24h.krw).string
+        changeLabel.text = change_Percentage
+        changeImageView.image = UIImage(systemName:  coin.item.data.price_change_percentage_24h.krw > 0 ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
+        
     }
 }
 
@@ -50,14 +63,15 @@ private extension TrendingSearchKeywordCollectionViewCell {
         
         iconImageView.image = UIImage(systemName: "photo.circle")
         iconImageView.tintColor = CoinFlowColor.subtitle
+        iconImageView.cornerRadius(26.0 / 2.0)
         
-        nameLabel.text = "COIN"
-        nameLabel.textColor = CoinFlowColor.title
-        nameLabel.font = .systemFont(ofSize: 12, weight: .bold)
+        symbolLabel.text = "COIN"
+        symbolLabel.textColor = CoinFlowColor.title
+        symbolLabel.font = .systemFont(ofSize: 12, weight: .bold)
         
-        symbolLabel.text = "Flow"
-        symbolLabel.textColor = CoinFlowColor.subtitle
-        symbolLabel.font = .systemFont(ofSize: 9, weight: .regular)
+        nameLabel.text = "Flow"
+        nameLabel.textColor = CoinFlowColor.subtitle
+        nameLabel.font = .systemFont(ofSize: 9, weight: .regular)
         
         nameStackView.axis = .vertical
         nameStackView.spacing = 0
@@ -82,7 +96,7 @@ private extension TrendingSearchKeywordCollectionViewCell {
     
     func configureConstraints() {
         
-        let inset: CGFloat = 14
+        let inset: CGFloat = 4
         let offset: CGFloat = 4
         
         
@@ -109,7 +123,7 @@ private extension TrendingSearchKeywordCollectionViewCell {
         
         changeStackView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.leading.greaterThanOrEqualTo(nameLabel.snp.trailing)
+            make.leading.greaterThanOrEqualTo(nameStackView.snp.trailing).offset(offset)
             make.trailing.equalToSuperview().inset(inset)
         }
         

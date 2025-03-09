@@ -19,6 +19,7 @@ final class CoinTrendingViewController: UIViewController {
     private var dataSource: DataSource!
     
     private let disposeBag = DisposeBag()
+    private let viewModel = CoinTrendingViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,11 +33,22 @@ final class CoinTrendingViewController: UIViewController {
     
     private func bind() {
         
-//        Observable.just(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14"])
-//            .bind(to: collectionView.rx.items(cellIdentifier: TrendingSearchKeywordCollectionViewCell.identifier,
-//                                              cellType: TrendingSearchKeywordCollectionViewCell.self)) { item, element, cell in
-//                cell.configure(with: element)
-//            }.disposed(by: disposeBag)
+        let input = CoinTrendingViewModel.Input(loadView: rx.viewWillAppear)
+        let output = viewModel.transform(input: input)
+        
+        output.trendingList
+            .drive(rx.updateSnapshot)
+            .disposed(by: disposeBag)
+    }
+}
+
+//MARK: - Reactive
+extension Reactive where Base: CoinTrendingViewController {
+    
+    var updateSnapshot: Binder<([CoinTrendingViewController.Item], [CoinTrendingViewController.Item])> {
+        return Binder(base) { base, list in
+            base.updateSnapshot(list.0, list.1)
+        }
     }
 }
 
@@ -136,7 +148,7 @@ private extension CoinTrendingViewController {
 }
 
 //MARK: - CollectionView DataSource
-private extension CoinTrendingViewController {
+extension CoinTrendingViewController {
     
     enum Section: Int, CaseIterable {
         case searchKeyword
@@ -144,8 +156,8 @@ private extension CoinTrendingViewController {
     }
     
     enum Item: Hashable {
-        case searchKeyword(Int)
-        case nft(Int)
+        case searchKeyword(CoingeckoTrendingCoin)
+        case nft(CoingeckoTrendingNft)
     }
     
     typealias DataSource = UICollectionViewDiffableDataSource<Section, Item>
@@ -170,16 +182,16 @@ private extension CoinTrendingViewController {
             return collectionView.dequeueConfiguredReusableSupplementary(using: headerSupplementaryProvider, for: indexPath)
         }
         
-        createSnapshot([])
+        updateSnapshot([], [])
         collectionView.dataSource = dataSource
     }
     
-    func trendingSearchKeywordCellRegistrationHandler(cell: TrendingSearchKeywordCollectionViewCell, indexPath: IndexPath, item: Int) {
-        
+    func trendingSearchKeywordCellRegistrationHandler(cell: TrendingSearchKeywordCollectionViewCell, indexPath: IndexPath, item: CoingeckoTrendingCoin) {
+        cell.configure(with: (indexPath.item, item))
     }
     
-    func trendingNFTCellRegistrationHandler(cell: TrendingNFTCollectionViewCell, indexPath: IndexPath, item: Int) {
-        
+    func trendingNFTCellRegistrationHandler(cell: TrendingNFTCollectionViewCell, indexPath: IndexPath, item: CoingeckoTrendingNft) {
+        cell.configure(with: item)
     }
     
     func headerSupplementaryRegistrationHandler(supplementaryView: HeaderSupplementaryView, string: String, indexPath: IndexPath) {
@@ -200,14 +212,11 @@ private extension CoinTrendingViewController {
         }
     }
     
-    func createSnapshot(_ items: [Item]) {
-        let list1 = Array(1...14).map{ Item.searchKeyword($0) }
-        let list2 = Array(1...7).map{ Item.nft($0) }
-        
+    func updateSnapshot(_ searchKeywordList: [Item], _ nftList: [Item]) {
         var snapshot = Snapshot()
         snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(list1, toSection: .searchKeyword)
-        snapshot.appendItems(list2, toSection: .nft)
+        snapshot.appendItems(searchKeywordList, toSection: .searchKeyword)
+        snapshot.appendItems(nftList, toSection: .nft)
         dataSource.applySnapshotUsingReloadData(snapshot)
     }
 }
