@@ -201,11 +201,8 @@ extension CoinTrendingViewController {
         
         switch section {
         case .searchKeyword:
-            let dateLabel = UILabel()
-            dateLabel.text = "날짜"
-            dateLabel.textColor = CoinFlowColor.subtitle
-            dateLabel.font = .systemFont(ofSize: 12, weight: .regular)
-            supplementaryView.addRightAccessoryView(dateLabel)
+            supplementaryView.accessoryLabel.isHidden = false
+            supplementaryView.accessoryLabel.text = CoinDateFomatter.trending(Date()).string
             supplementaryView.configure(with: "인기 검색어")
         case .nft:
             supplementaryView.configure(with: "인기 NFT")

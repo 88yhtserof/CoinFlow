@@ -12,7 +12,7 @@ import SnapKit
 final class HeaderSupplementaryView: UICollectionReusableView {
     
     private let titleLabel = UILabel()
-    private let rightAccessoryStackView = UIStackView()
+    let accessoryLabel = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -26,12 +26,13 @@ final class HeaderSupplementaryView: UICollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with string: String) {
-        titleLabel.text = string
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        accessoryLabel.isHidden = true
     }
     
-    func addRightAccessoryView(_ view: UIView) {
-        rightAccessoryStackView.addArrangedSubview(view)
+    func configure(with string: String) {
+        titleLabel.text = string
     }
 }
 
@@ -41,13 +42,13 @@ private extension HeaderSupplementaryView {
         titleLabel.textColor = CoinFlowColor.title
         titleLabel.font = .systemFont(ofSize: 16, weight: .heavy)
         
-        rightAccessoryStackView.axis = .horizontal
-        rightAccessoryStackView.distribution = .fill
-        rightAccessoryStackView.alignment = .center
+        accessoryLabel.textColor = CoinFlowColor.subtitle
+        accessoryLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        accessoryLabel.isHidden = true
     }
     
     private func configureHierarchy() {
-        addSubviews([titleLabel, rightAccessoryStackView])
+        addSubviews([titleLabel, accessoryLabel])
     }
     
     private func configureConstraints() {
@@ -55,7 +56,7 @@ private extension HeaderSupplementaryView {
             make.edges.equalToSuperview()
         }
         
-        rightAccessoryStackView.snp.makeConstraints { make in
+        accessoryLabel.snp.makeConstraints { make in
             make.centerY.equalTo(titleLabel)
             make.trailing.equalToSuperview().inset(20)
         }
