@@ -41,7 +41,8 @@ final class CoinTrendingViewController: UIViewController {
         output.searchedText
             .compactMap{ $0 }
             .map { text in
-                let coinSearchVC = CoinSearchViewController()
+                let viewModel = CoinSearchViewModel(searchKeyword: text)
+                let coinSearchVC = CoinSearchViewController(viewModel: viewModel)
                 return coinSearchVC
             }
             .drive(rx.pushViewController)

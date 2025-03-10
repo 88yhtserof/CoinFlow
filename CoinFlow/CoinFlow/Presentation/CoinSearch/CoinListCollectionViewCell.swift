@@ -7,6 +7,9 @@
 
 import UIKit
 
+import SnapKit
+import Kingfisher
+
 final class CoinListCollectionViewCell: UICollectionViewCell, BaseCollectionViewCell {
     
     static let identifier = String(describing: CoinListCollectionViewCell.self)
@@ -38,8 +41,14 @@ final class CoinListCollectionViewCell: UICollectionViewCell, BaseCollectionView
         iconImageView.image = UIImage(systemName: "photo.circle")
     }
     
-    func configure(with value: String) {
+    func configure(with value: CoingeckoSearchCoin) {
+        if let url = URL(string: value.thumb) {
+            iconImageView.kf.setImage(with: url)
+        }
         
+        symbolLabel.text = value.symbol
+        nameLabel.text = value.name
+        rankMarkView.text = String(value.market_cap_rank ?? 0)
     }
 }
 

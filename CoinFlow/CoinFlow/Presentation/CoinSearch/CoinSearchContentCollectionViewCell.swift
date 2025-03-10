@@ -36,7 +36,7 @@ final class CoinSearchContentCollectionViewCell: UICollectionViewCell, BaseColle
         collectionView.dataSource = nil
     }
     
-    func configure(with value: [String]) {
+    func configure(with value: [CoingeckoSearchCoin]) {
         Observable.just(value)
             .asDriver(onErrorJustReturn: [])
             .drive(collectionView.rx.items(cellIdentifier: CoinListCollectionViewCell.identifier, cellType: CoinListCollectionViewCell.self)) { item, element, cell in
@@ -61,7 +61,8 @@ private extension CoinSearchContentCollectionViewCell {
     
     func configureConstraints() {
         collectionView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.horizontalEdges.equalToSuperview()
+            make.bottom.equalToSuperview().inset(60)
         }
     }
 }

@@ -20,6 +20,20 @@ final class CoinSearchViewController: UIViewController {
     private var isScrollingUp: Bool = true
     private var currentPage: Int = 0
     
+    private let viewModel: CoinSearchViewModel
+    private let disposeBag = DisposeBag()
+    
+    init(viewModel: CoinSearchViewModel) {
+        self.viewModel = viewModel
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -27,6 +41,17 @@ final class CoinSearchViewController: UIViewController {
         configureConstraints()
         configureView()
         configrueDataSource()
+        bind()
+    }
+    
+    private func bind() {
+        
+        let input = CoinSearchViewModel.Input()
+        let output = viewModel.transform(input: input)
+        
+        output.itemTuple
+            .drive(rx.updateSnapshot)
+            .disposed(by: disposeBag)
     }
 }
 
@@ -134,7 +159,7 @@ extension CoinSearchViewController {
         case content(Content)
         
         enum Content: Hashable {
-            case coins([String])
+            case coins([CoingeckoSearchCoin])
             case nfts([String])
             case exchanges([String])
         }
@@ -160,7 +185,7 @@ extension CoinSearchViewController {
             }
         })
         
-        updateSnapshot([])
+        updateSnapshot([], [], [])
         collectionView.dataSource = dataSource
     }
     
@@ -185,37 +210,18 @@ extension CoinSearchViewController {
         case .coins(let list):
             cell.configure(with: list)
         case .nfts:
-            cell.configure(with: [])
             cell.contentView.backgroundColor = CoinFlowColor.subtitle
         case .exchanges:
-            cell.configure(with: [])
             cell.contentView.backgroundColor = CoinFlowColor.subBackground
         }
     }
     
-    func updateSnapshot(_ items: [Item]) {
-        let titleList = ["1", "2", "3"].map{ Item.title($0) }
-        let indicatorList = [1, 2, 3].map{ Item.indicator($0) }
-        let list = ["coin", "nft", "거래소"]
-            .map { element in
-                switch element {
-                    case "coin":
-                    return Item.content(.coins(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"]))
-                case "nft":
-                    return Item.content(.nfts([]))
-                case "거래소":
-                    return Item.content(.exchanges([]))
-                default:
-                    print("list 아이템 구성 실패")
-                    fatalError()
-                }
-            }
-        
+    func updateSnapshot(_ titleList: [Item], _ indicatorList: [Item], _ contentList: [Item]) {
         var snapshot = Snapshot()
         snapshot.appendSections(Section.allCases)
         snapshot.appendItems(titleList, toSection: .title)
         snapshot.appendItems(indicatorList, toSection: .indicator)
-        snapshot.appendItems(list, toSection: .content)
+        snapshot.appendItems(contentList, toSection: .content)
         dataSource.applySnapshotUsingReloadData(snapshot)
     }
 }
@@ -247,9 +253,9 @@ extension CoinSearchViewController: UICollectionViewDelegate {
 //MARK: - Reactive
 extension Reactive where Base: CoinSearchViewController {
     
-    var updateSnapshot: Binder<[CoinSearchViewController.Item]> {
+    var updateSnapshot: Binder<([CoinSearchViewController.Item], [CoinSearchViewController.Item], [CoinSearchViewController.Item])> {
         return Binder(base) { base, list in
-            base.updateSnapshot(list)
+            base.updateSnapshot(list.0, list.1, list.2)
         }
     }
 }
