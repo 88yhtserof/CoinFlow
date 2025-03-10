@@ -11,6 +11,7 @@ import Alamofire
 
 enum CoingeckoNetworkAPI: BaseNetworkAPI {
     case trending
+    case search(String)
     
     var url: URL? {
         return URL(string: baseURL + endpoint)
@@ -18,7 +19,7 @@ enum CoingeckoNetworkAPI: BaseNetworkAPI {
     
     var method: HTTPMethod {
         switch self {
-        case .trending:
+        case .trending, .search:
             return .get
         }
     }
@@ -27,12 +28,14 @@ enum CoingeckoNetworkAPI: BaseNetworkAPI {
         switch self {
         case .trending:
             return nil
+        case .search(let text):
+            return ["query": text]
         }
     }
     
     var headers: HTTPHeaders? {
         switch self {
-        case .trending:
+        case .trending, .search:
             return nil
         }
     }
@@ -48,6 +51,8 @@ private extension CoingeckoNetworkAPI {
         switch self {
         case .trending:
             return "search/trending"
+        case .search:
+            return "search"
         }
     }
 }
