@@ -60,6 +60,7 @@ private extension CoinSearchViewController {
     
     func configureView() {
         view.backgroundColor = CoinFlowColor.background
+        navigationItem.backButtonTitle = ""
         
         collectionView.bounces = false
         collectionView.isScrollEnabled = false

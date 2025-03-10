@@ -65,6 +65,7 @@ private extension CoinTrendingViewController {
     func configureView() {
         view.backgroundColor = CoinFlowColor.background
         navigationItem.leftBarButtonItem = TitleBarButtonItem(title: "가상자산 / 심볼 검색")
+        navigationItem.backButtonTitle = ""
         
         collectionView.register(TrendingSearchKeywordCollectionViewCell.self, forCellWithReuseIdentifier: TrendingSearchKeywordCollectionViewCell.identifier)
         collectionView.isScrollEnabled = false
