@@ -67,8 +67,9 @@ final class CoinTrendingViewModel: BaseViewModel {
 
         input.tapSearchButton
             .withLatestFrom(input.searchText)
-            .map{ $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter{ !$0.isEmpty }
+            .flatMap{ text in
+                Search.search(keyword: text)
+            }
             .bind(to: searchedText)
             .disposed(by: disposeBag)
         

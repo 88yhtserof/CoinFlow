@@ -13,6 +13,8 @@ import RxCocoa
 final class CoinSearchViewModel: BaseViewModel {
     
     struct Input {
+        let tapSearchButton: ControlEvent<Void>
+        let searchText: ControlProperty<String>
     }
     
     struct Output {
@@ -53,6 +55,7 @@ final class CoinSearchViewModel: BaseViewModel {
         let itemTuple = BehaviorRelay<([CoinSearchViewController.Item], [CoinSearchViewController.Item], [CoinSearchViewController.Item])>(value: ([], [], []))
         
         searchedKeyword
+            .distinctUntilChanged()
             .flatMap {
                 NetworkManager.shared
                     .request(api: CoingeckoNetworkAPI.search($0))
@@ -77,8 +80,14 @@ final class CoinSearchViewModel: BaseViewModel {
             .disposed(by: disposeBag)
         
         Observable
-            .zip(titleList, indicatorList, contentList)
+            .combineLatest(titleList, indicatorList, contentList)
             .bind(to: itemTuple)
+            .disposed(by: disposeBag)
+        
+        input.tapSearchButton
+            .withLatestFrom(input.searchText)
+            .flatMap{ Search.search(keyword: $0) }
+            .bind(to: searchedKeyword)
             .disposed(by: disposeBag)
         
         

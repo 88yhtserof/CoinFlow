@@ -13,7 +13,7 @@ import RxCocoa
 final class CoinSearchViewController: UIViewController {
     
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout())
-    private let searchTextField = UITextField()
+    let searchTextField = UITextField()
     
     private var dataSource: DataSource!
     
@@ -47,7 +47,8 @@ final class CoinSearchViewController: UIViewController {
     
     private func bind() {
         
-        let input = CoinSearchViewModel.Input()
+        let input = CoinSearchViewModel.Input(tapSearchButton: rx.searchButtonClicked,
+                                              searchText: searchTextField.rx.text.orEmpty)
         let output = viewModel.transform(input: input)
         
         output.itemTuple
@@ -269,5 +270,10 @@ extension Reactive where Base: CoinSearchViewController {
         return Binder(base) { base, list in
             base.updateSnapshot(list.0, list.1, list.2)
         }
+    }
+    
+    var searchButtonClicked: ControlEvent<Void> {
+        let source = base.searchTextField.rx.controlEvent(.editingDidEnd)
+        return ControlEvent(events: source)
     }
 }
