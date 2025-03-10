@@ -49,6 +49,7 @@ final class CoinListCollectionViewCell: UICollectionViewCell, BaseCollectionView
         symbolLabel.text = value.symbol
         nameLabel.text = value.name
         rankMarkView.text = String(value.market_cap_rank ?? 0)
+        favoriteButton.bind(viewModel: FavoriteButtonViewModel(id: value.id))
     }
 }
 
