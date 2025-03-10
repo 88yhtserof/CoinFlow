@@ -16,9 +16,9 @@ final class CoinSearchViewModel: BaseViewModel {
     }
     
     struct Output {
+        let searchedText: Driver<String>
         let titleList: Driver<[CoinSearchViewController.Item]>
         let indicatorList: Driver<[CoinSearchViewController.Item]>
-        
         let contentList: Driver<[CoinSearchViewController.Item]>
         let searchResultList: Driver<CoinSearchViewController.Item?>
         let itemTuple: Driver<([CoinSearchViewController.Item], [CoinSearchViewController.Item], [CoinSearchViewController.Item])>
@@ -44,6 +44,7 @@ final class CoinSearchViewModel: BaseViewModel {
     
     func transform(input: Input) -> Output {
         
+        let searchedKeyword = BehaviorRelay(value: searchKeyword)
         let titleList = BehaviorRelay(value: titleList)
         let indicatorList = BehaviorRelay(value: indicatorList)
         let contentList = PublishRelay<[CoinSearchViewController.Item]>()
@@ -51,7 +52,7 @@ final class CoinSearchViewModel: BaseViewModel {
         
         let itemTuple = BehaviorRelay<([CoinSearchViewController.Item], [CoinSearchViewController.Item], [CoinSearchViewController.Item])>(value: ([], [], []))
         
-        Observable.just(searchKeyword)
+        searchedKeyword
             .flatMap {
                 NetworkManager.shared
                     .request(api: CoingeckoNetworkAPI.search($0))
@@ -81,7 +82,8 @@ final class CoinSearchViewModel: BaseViewModel {
             .disposed(by: disposeBag)
         
         
-        return Output(titleList: titleList.asDriver(),
+        return Output(searchedText: searchedKeyword.asDriver(),
+                      titleList: titleList.asDriver(),
                       indicatorList: indicatorList.asDriver(),
                       contentList: contentList.asDriver(onErrorJustReturn: []),
                       searchResultList: searchResultList.asDriver(),

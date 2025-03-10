@@ -13,6 +13,7 @@ import RxCocoa
 final class CoinSearchViewController: UIViewController {
     
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout())
+    private let searchTextField = UITextField()
     
     private var dataSource: DataSource!
     
@@ -52,6 +53,10 @@ final class CoinSearchViewController: UIViewController {
         output.itemTuple
             .drive(rx.updateSnapshot)
             .disposed(by: disposeBag)
+        
+        output.searchedText
+            .drive(searchTextField.rx.text)
+            .disposed(by: disposeBag)
     }
 }
 
@@ -61,6 +66,12 @@ private extension CoinSearchViewController {
     func configureView() {
         view.backgroundColor = CoinFlowColor.background
         navigationItem.backButtonTitle = ""
+        navigationItem.leftItemsSupplementBackButton = true
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: searchTextField)
+        
+        searchTextField.placeholder = "검색어를 입력하세요"
+        searchTextField.font = .systemFont(ofSize: 12, weight: .regular)
+        searchTextField.textAlignment = .left
         
         collectionView.bounces = false
         collectionView.isScrollEnabled = false
