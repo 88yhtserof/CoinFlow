@@ -99,13 +99,6 @@ private extension CoinSearchViewController {
     }
     
     func sectionForContent() -> NSCollectionLayoutSection {
-//        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0 / 3.0), heightDimension: .absolute(44.0))
-//        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
-//        let verticalGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-//        let horizontalGroup = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-//        
-//        let section = NSCollectionLayoutSection(group: horizontalGroup)
-        
         let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
         
         let item = NSCollectionLayoutItem(layoutSize: size)
@@ -138,7 +131,13 @@ extension CoinSearchViewController {
     enum Item: Hashable {
         case title(String)
         case indicator(Int)
-        case content(String)
+        case content(Content)
+        
+        enum Content: Hashable {
+            case coins([String])
+            case nfts([String])
+            case exchanges([String])
+        }
     }
     
     typealias DataSource = UICollectionViewDiffableDataSource<Section, Item>
@@ -180,13 +179,37 @@ extension CoinSearchViewController {
         }
     }
     
-    func contentCellRegistration(cell: UICollectionViewCell, indexPath: IndexPath, item: String) {
+    func contentCellRegistration(cell: CoinSearchContentCollectionViewCell, indexPath: IndexPath, item: Item.Content) {
+        
+        switch item {
+        case .coins(let list):
+            cell.configure(with: list)
+        case .nfts:
+            cell.configure(with: [])
+            cell.contentView.backgroundColor = CoinFlowColor.subtitle
+        case .exchanges:
+            cell.configure(with: [])
+            cell.contentView.backgroundColor = CoinFlowColor.subBackground
+        }
     }
     
     func updateSnapshot(_ items: [Item]) {
         let titleList = ["1", "2", "3"].map{ Item.title($0) }
         let indicatorList = [1, 2, 3].map{ Item.indicator($0) }
-        let list = ["1", "2", "3"].map{ Item.content($0) }
+        let list = ["coin", "nft", "거래소"]
+            .map { element in
+                switch element {
+                    case "coin":
+                    return Item.content(.coins(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"]))
+                case "nft":
+                    return Item.content(.nfts([]))
+                case "거래소":
+                    return Item.content(.exchanges([]))
+                default:
+                    print("list 아이템 구성 실패")
+                    fatalError()
+                }
+            }
         
         var snapshot = Snapshot()
         snapshot.appendSections(Section.allCases)
