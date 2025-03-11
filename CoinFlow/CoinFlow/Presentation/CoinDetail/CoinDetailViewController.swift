@@ -63,7 +63,7 @@ class CoinDetailViewController: UIViewController {
                 owner.iconTitleView.rx.title.onNext(coinsMaket.symbol)
                 owner.iconTitleView.setImage(string: coinsMaket.image)
                 owner.favoriteButton.bind(viewModel: FavoriteButtonViewModel(id: coinsMaket.id))
-                
+                owner.rx.updateSnapshot.onNext(([Item.chart(coinsMaket)], [Item.coinInfo(coinsMaket)], [Item.coinIndicator(coinsMaket)]))
             }
             .disposed(by: disposeBag)
     }
@@ -180,9 +180,9 @@ extension CoinDetailViewController {
     }
     
     enum Item: Hashable {
-        case chart(String) //CoingeckoCoinMarketResponse
-        case coinInfo(String) //CoingeckoCoinMarketResponse
-        case coinIndicator(String) //CoingeckoCoinMarketResponse
+        case chart(CoingeckoCoinsMarket) //CoingeckoCoinMarketResponse
+        case coinInfo(CoingeckoCoinsMarket) //CoingeckoCoinMarketResponse
+        case coinIndicator(CoingeckoCoinsMarket) //CoingeckoCoinMarketResponse
     }
     
     typealias DataSource = UICollectionViewDiffableDataSource<Section, Item>
@@ -210,19 +210,19 @@ extension CoinDetailViewController {
             return collectionView.dequeueConfiguredReusableSupplementary(using: headerSupplementaryProvider, for: indexPath)
         }
         
-        updateSnapshot([.chart("0")], [.coinInfo("1")], [.coinIndicator("2")])
+        updateSnapshot([], [], [])
         collectionView.dataSource = dataSource
     }
     
-    func chartCellRegistrationHandler(cell: ChartCollectionViewCell, indexPath: IndexPath, item: String) {
+    func chartCellRegistrationHandler(cell: ChartCollectionViewCell, indexPath: IndexPath, item: CoingeckoCoinsMarket) {
         cell.configure(with: item)
     }
     
-    func coinInfoCellRegistrationHandler(cell: CoinInfoCollectionViewCell, indexPath: IndexPath, item: String) {
+    func coinInfoCellRegistrationHandler(cell: CoinInfoCollectionViewCell, indexPath: IndexPath, item: CoingeckoCoinsMarket) {
         cell.configure(with: item)
     }
     
-    func coinIndicatorCellRegistrationHandler(cell: CoinIndicatorCollectionViewCell, indexPath: IndexPath, item: String) {
+    func coinIndicatorCellRegistrationHandler(cell: CoinIndicatorCollectionViewCell, indexPath: IndexPath, item: CoingeckoCoinsMarket) {
         cell.configure(with: item)
     }
     

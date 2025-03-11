@@ -35,8 +35,16 @@ final class CoinInfoCollectionViewCell: CoinBaseCollectionViewCell, BaseCollecti
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with value: String) {
+    func configure(with value: CoingeckoCoinsMarket) {
+        high24hInfoView.valueLabel.text = String(format: "₩%@", CoinNumberFormatter.currentPrice(number: Int(value.high_24h)).string ?? "")
         
+        low24hInfoView.valueLabel.text = String(format: "₩%@", CoinNumberFormatter.currentPrice(number: Int(value.low_24h)).string ?? "")
+        
+        athInfoView.valueLabel.text = String(format: "₩%@", CoinNumberFormatter.currentPrice(number: Int(value.ath)).string ?? "")
+        athInfoView.dateLabel.text = CoinDateFomatter.detailInfo(CoinDateFomatter.responseDate(value.ath_date).date ?? Date()).string
+        
+        atlInfoView.valueLabel.text = String(format: "₩%@", CoinNumberFormatter.currentPrice(number: Int(value.atl)).string ?? "")
+        atlInfoView.dateLabel.text = CoinDateFomatter.detailInfo(CoinDateFomatter.responseDate(value.atl_date).date ?? Date()).string
     }
 }
 
@@ -46,17 +54,17 @@ private extension CoinInfoCollectionViewCell {
     func configureView() {
         
         high24hInfoView.titleLabel.text = "24시간 고가"
-        high24hInfoView.valueLabel.text = CoinNumberFormatter.currentPrice(number: 142060908).string
+        high24hInfoView.valueLabel.text = String(format: "₩%@", CoinNumberFormatter.currentPrice(number: 142060908).string ?? "")
         
         low24hInfoView.titleLabel.text = "24시간 저가"
-        low24hInfoView.valueLabel.text = CoinNumberFormatter.currentPrice(number: 142060908).string
+        low24hInfoView.valueLabel.text = String(format: "₩%@", CoinNumberFormatter.currentPrice(number: 142060908).string ?? "")
         
         athInfoView.titleLabel.text = "역대 최고가"
-        athInfoView.valueLabel.text = CoinNumberFormatter.currentPrice(number: 142060908).string
+        athInfoView.valueLabel.text = String(format: "₩%@", CoinNumberFormatter.currentPrice(number: 142060908).string ?? "")
         athInfoView.dateLabel.text = CoinDateFomatter.detailInfo(Date()).string
         
         atlInfoView.titleLabel.text = "역대 최저가"
-        atlInfoView.valueLabel.text = CoinNumberFormatter.currentPrice(number: 142060908).string
+        atlInfoView.valueLabel.text = String(format: "₩%@", CoinNumberFormatter.currentPrice(number: 142060908).string ?? "")
         atlInfoView.dateLabel.text = CoinDateFomatter.detailInfo(Date()).string
         
         [ leftVerticalStackView, rightVerticalStackView ]

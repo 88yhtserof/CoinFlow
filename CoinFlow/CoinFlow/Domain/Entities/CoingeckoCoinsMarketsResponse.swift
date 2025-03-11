@@ -9,7 +9,7 @@ import Foundation
 
 typealias CoingeckoCoinsMarketsResponse = [CoingeckoCoinsMarket]
 
-struct CoingeckoCoinsMarket: Decodable {
+struct CoingeckoCoinsMarket: Decodable, Hashable {
     let id: String
     let name: String
     let symbol: String
@@ -26,8 +26,9 @@ struct CoingeckoCoinsMarket: Decodable {
     let fully_diluted_valuation: Int
     let total_volume: Int
     let sparkline_in_7d: Sparkline
+    let market_cap: Double
 }
 
-struct Sparkline: Decodable {
+struct Sparkline: Decodable, Hashable {
     let price: [Double]
 }

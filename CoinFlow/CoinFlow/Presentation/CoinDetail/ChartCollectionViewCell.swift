@@ -36,8 +36,26 @@ final class ChartCollectionViewCell: UICollectionViewCell, BaseCollectionViewCel
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with value: String) {
+    func configure(with value: CoingeckoCoinsMarket) {
+        currentPriceLabel.text = String(format: "₩%@", CoinNumberFormatter.currentPrice(number: Int(value.current_price)).string ?? "")
         
+        let change_Percentage = value.price_change_percentage_24h
+        let change_Percentage_String = CoinNumberFormatter.changeRate(number: change_Percentage).string
+        changeLabel.text = change_Percentage_String
+        changeImageView.image = UIImage(systemName:  value.price_change_percentage_24h > 0 ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
+        
+        if change_Percentage > 0 {
+            changeLabel.textColor = CoinFlowColor.rise
+            changeImageView.tintColor = CoinFlowColor.rise
+        } else if change_Percentage < 0 {
+            changeLabel.textColor = CoinFlowColor.fall
+            changeImageView.tintColor = CoinFlowColor.fall
+        } else {
+            changeLabel.textColor = CoinFlowColor.title
+            changeImageView.tintColor = .clear
+        }
+        
+        updatedDateLabel.text = CoinDateFomatter.detailUpdating(Date()).string
     }
 }
 
@@ -46,7 +64,7 @@ private extension ChartCollectionViewCell {
     
     func configureView() {
         
-        currentPriceLabel.text = String(format: "₩%@", CoinNumberFormatter.currentPrice(number: 10000).string ?? "")
+        currentPriceLabel.text = String(format: "₩%@", CoinNumberFormatter.tradePrice(number: 10000).string ?? "")
         
         changeImageView.image = UIImage(systemName: "arrowtriangle.up.fill")
         changeImageView.tintColor = CoinFlowColor.title
