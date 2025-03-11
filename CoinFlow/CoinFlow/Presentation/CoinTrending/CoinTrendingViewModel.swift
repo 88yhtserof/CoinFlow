@@ -18,11 +18,13 @@ final class CoinTrendingViewModel: BaseViewModel {
         let loadView: ControlEvent<Void>
         let searchText: ControlProperty<String>
         let tapSearchButton: ControlEvent<Void>
+        let selectTrendingCoinItem: Observable<CoinTrendingViewController.Item>
     }
     
     struct Output {
         let trendingList: Driver<([CoinTrendingViewController.Item], [CoinTrendingViewController.Item])>
         let searchedText: Driver<String?>
+        let selectedTrendingCoin: Driver<CoingeckoTrendingCoin?>
     }
     
     init() {
@@ -37,6 +39,7 @@ final class CoinTrendingViewModel: BaseViewModel {
         
         let trendingList = BehaviorRelay<([CoinTrendingViewController.Item], [CoinTrendingViewController.Item])>(value: ([], []))
         let searchedText = PublishRelay<String?>()
+        let selectedTrendingCoin = PublishRelay<CoingeckoTrendingCoin?>()
         
         let timer = Observable<Int>
             .timer(.seconds(10 * 60), period: .seconds(10 * 60), scheduler: MainScheduler.instance)
@@ -73,8 +76,21 @@ final class CoinTrendingViewModel: BaseViewModel {
             .bind(to: searchedText)
             .disposed(by: disposeBag)
         
+        input.selectTrendingCoinItem
+            .compactMap { item in
+                switch item {
+                case .searchKeyword(let value):
+                    return value
+                default:
+                    return nil
+                }
+            }
+            .bind(to: selectedTrendingCoin)
+            .disposed(by: disposeBag)
+        
         return Output(trendingList: trendingList.asDriver(),
-                      searchedText: searchedText.asDriver(onErrorJustReturn: nil))
+                      searchedText: searchedText.asDriver(onErrorJustReturn: nil),
+                      selectedTrendingCoin: selectedTrendingCoin.asDriver(onErrorJustReturn: nil))
     }
 }
 

@@ -33,9 +33,16 @@ final class CoinTrendingViewController: UIViewController {
     
     private func bind() {
         
+        let selectTrendingCoinItem = collectionView.rx.itemSelected
+            .withUnretained(self)
+            .compactMap { owner, indexPath in
+                owner.dataSource.itemIdentifier(for: indexPath)
+            }
+        
         let input = CoinTrendingViewModel.Input(loadView: rx.viewWillAppear,
                                                 searchText: searchBar.searchTextField.rx.text.orEmpty,
-                                                tapSearchButton: searchBar.rx.searchButtonClicked)
+                                                tapSearchButton: searchBar.rx.searchButtonClicked,
+                                                selectTrendingCoinItem: selectTrendingCoinItem)
         let output = viewModel.transform(input: input)
         
         output.searchedText
@@ -55,6 +62,13 @@ final class CoinTrendingViewController: UIViewController {
         searchBar.rx.searchButtonClicked
             .map{ _ in nil }
             .bind(to: searchBar.searchTextField.rx.text)
+            .disposed(by: disposeBag)
+        
+        output.selectedTrendingCoin
+            .map { coin in
+                return CoinDetailViewController()
+            }
+            .drive(rx.pushViewController)
             .disposed(by: disposeBag)
     }
 }
