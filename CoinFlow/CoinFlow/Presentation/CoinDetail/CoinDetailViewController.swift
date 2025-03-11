@@ -14,6 +14,7 @@ import RxCocoa
 class CoinDetailViewController: UIViewController {
 
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout())
+    private let favoriteButton = FavoriteButton()
     private let iconTitleView = IconTitleView()
     
     private var dataSource: DataSource!
@@ -39,6 +40,16 @@ class CoinDetailViewController: UIViewController {
         configureView()
         configureDataSource()
         bind()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(favoriteButtonDidSave), name: NSNotification.Name("FavoriteButtonDidSave"), object: nil)
+    }
+    
+    @objc func favoriteButtonDidSave(_ notification: Notification) {
+        guard let message = notification.userInfo?["message"] as? String else {
+            print("Failed to get saving message")
+            return
+        }
+        self.view.makeToast(message, duration: 2.0, position: .bottom)
     }
     
     private func bind() {
@@ -51,6 +62,7 @@ class CoinDetailViewController: UIViewController {
             .drive(with: self) { owner, coinsMaket in
                 owner.iconTitleView.rx.title.onNext(coinsMaket.symbol)
                 owner.iconTitleView.setImage(string: coinsMaket.image)
+                owner.favoriteButton.bind(viewModel: FavoriteButtonViewModel(id: coinsMaket.id))
                 
             }
             .disposed(by: disposeBag)
@@ -63,6 +75,7 @@ private extension CoinDetailViewController {
     func configureView() {
         view.backgroundColor = CoinFlowColor.background
         navigationItem.backButtonTitle = ""
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: favoriteButton)
         navigationItem.titleView = iconTitleView
     }
     
