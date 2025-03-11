@@ -67,7 +67,6 @@ private extension CoinTrendingViewController {
         navigationItem.leftBarButtonItem = TitleBarButtonItem(title: "가상자산 / 심볼 검색")
         navigationItem.backButtonTitle = ""
         
-        collectionView.register(TrendingSearchKeywordCollectionViewCell.self, forCellWithReuseIdentifier: TrendingSearchKeywordCollectionViewCell.identifier)
         collectionView.isScrollEnabled = false
     }
     
@@ -124,7 +123,7 @@ private extension CoinTrendingViewController {
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
         section.interGroupSpacing = 10
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: -10, trailing: -10)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)
         
         section.boundarySupplementaryItems = [headerSupplementaryItem()]
         
@@ -141,7 +140,7 @@ private extension CoinTrendingViewController {
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
         section.interGroupSpacing = 10
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 10, trailing: 10)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)
         
         section.boundarySupplementaryItems = [headerSupplementaryItem()]
         
