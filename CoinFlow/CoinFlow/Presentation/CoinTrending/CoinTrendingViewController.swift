@@ -65,8 +65,10 @@ final class CoinTrendingViewController: UIViewController {
             .disposed(by: disposeBag)
         
         output.selectedTrendingCoin
+            .compactMap{ $0 }
             .map { coin in
-                return CoinDetailViewController()
+                let viewModel = CoinDetailViewModel(id: coin.item.id)
+                return CoinDetailViewController(viewModel: viewModel)
             }
             .drive(rx.pushViewController)
             .disposed(by: disposeBag)

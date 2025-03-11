@@ -236,13 +236,10 @@ extension CoinSearchViewController {
             cell.configure(with: list)
             
             // 검색 결과 아이템 선택
-            cell.collectionView.rx.itemSelected
-                .withUnretained(self)
-                .compactMap { owner, indexPath in
-                    owner.dataSource.itemIdentifier(for: indexPath)
-                }
+            cell.collectionView.rx.modelSelected(CoingeckoSearchCoin.self)
                 .map { coin in
-                    return CoinDetailViewController()
+                    let viewModel = CoinDetailViewModel(id: coin.id)
+                    return CoinDetailViewController(viewModel: viewModel)
                 }
                 .bind(to: rx.pushViewController)
                 .disposed(by: disposeBag)
