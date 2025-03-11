@@ -22,12 +22,27 @@ final class CoinListCollectionViewCell: UICollectionViewCell, BaseCollectionView
     private lazy var nameStackView = UIStackView(arrangedSubviews: [symbolStackView, nameLabel])
     private lazy var favoriteButton = FavoriteButton()
     
+    private var id: String?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         configureHierarchy()
         configureConstraints()
         configureView()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(favoriteButtonDidSave), name: NSNotification.Name("FavoriteButtonResult"), object: nil)
+    }
+    
+    @objc func favoriteButtonDidSave(_ notification: Notification) {
+        guard let id = notification.userInfo?["id"] as? String,
+              let result = notification.userInfo?["result"] as? Bool else {
+            print("Failed to get result")
+            return
+        }
+        if id == (self.id ?? "") {
+            favoriteButton.isSelected = result
+        }
     }
     
     @available(*, unavailable)
@@ -42,6 +57,8 @@ final class CoinListCollectionViewCell: UICollectionViewCell, BaseCollectionView
     }
     
     func configure(with value: CoingeckoSearchCoin) {
+        self.id = value.id
+        
         if let url = URL(string: value.thumb) {
             iconImageView.kf.setImage(with: url)
         }
