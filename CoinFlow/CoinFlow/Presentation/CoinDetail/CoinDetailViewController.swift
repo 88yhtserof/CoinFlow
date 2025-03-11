@@ -52,6 +52,10 @@ class CoinDetailViewController: UIViewController {
         self.view.makeToast(message, duration: 2.0, position: .bottom)
     }
     
+    @objc func didMoreButtonTapped() {
+        self.view.makeToast("준비 중입니다.", duration: 2.0, position: .bottom)
+    }
+    
     private func bind() {
         
         let input = CoinDetailViewModel.Input()
@@ -237,10 +241,12 @@ extension CoinDetailViewController {
         case .coinInfo:
             let configuration = UIButton.Configuration.accessory(title: "더보기", image: "chevron.right")
             supplementaryView.accessoryButtonConfiguration = configuration
+            supplementaryView.accessoryButton.addTarget(self, action: #selector(didMoreButtonTapped), for: .touchUpInside)
             supplementaryView.configure(with: "종목정보")
         case .coinIndicator:
             let configuration = UIButton.Configuration.accessory(title: "더보기", image: "chevron.right")
             supplementaryView.accessoryButtonConfiguration = configuration
+            supplementaryView.accessoryButton.addTarget(self, action: #selector(didMoreButtonTapped), for: .touchUpInside)
             supplementaryView.configure(with: "투자지표")
         }
     }

@@ -12,7 +12,7 @@ import SnapKit
 final class HeaderSupplementaryView: UICollectionReusableView {
     
     private let titleLabel = UILabel()
-    private let accessoryButton = UIButton()
+    let accessoryButton = UIButton()
     
     var accessoryButtonConfiguration: UIButton.Configuration? {
         get { accessoryButton.configuration }
