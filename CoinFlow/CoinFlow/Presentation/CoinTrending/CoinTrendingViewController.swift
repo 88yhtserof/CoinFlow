@@ -41,7 +41,8 @@ final class CoinTrendingViewController: UIViewController {
         output.searchedText
             .compactMap{ $0 }
             .map { text in
-                let coinSearchVC = CoinSearchViewController()
+                let viewModel = CoinSearchViewModel(searchKeyword: text)
+                let coinSearchVC = CoinSearchViewController(viewModel: viewModel)
                 return coinSearchVC
             }
             .drive(rx.pushViewController)
@@ -64,6 +65,7 @@ private extension CoinTrendingViewController {
     func configureView() {
         view.backgroundColor = CoinFlowColor.background
         navigationItem.leftBarButtonItem = TitleBarButtonItem(title: "가상자산 / 심볼 검색")
+        navigationItem.backButtonTitle = ""
         
         collectionView.register(TrendingSearchKeywordCollectionViewCell.self, forCellWithReuseIdentifier: TrendingSearchKeywordCollectionViewCell.identifier)
         collectionView.isScrollEnabled = false

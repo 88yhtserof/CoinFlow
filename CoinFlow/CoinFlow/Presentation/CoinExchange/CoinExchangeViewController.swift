@@ -48,6 +48,7 @@ private extension CoinExchangeViewController {
     func configureView() {
         view.backgroundColor = CoinFlowColor.background
         navigationItem.leftBarButtonItem = TitleBarButtonItem(title: "거래소")
+        navigationItem.backButtonTitle = ""
         
         collectionView.register(CoinExchangeCollectionViewCell.self, forCellWithReuseIdentifier: CoinExchangeCollectionViewCell.identifier)
         collectionView.allowsSelection = false
