@@ -12,6 +12,7 @@ import Alamofire
 enum CoingeckoNetworkAPI: BaseNetworkAPI {
     case trending
     case search(String)
+    case coinsMarkets(String)
     
     var url: URL? {
         return URL(string: baseURL + endpoint)
@@ -19,7 +20,7 @@ enum CoingeckoNetworkAPI: BaseNetworkAPI {
     
     var method: HTTPMethod {
         switch self {
-        case .trending, .search:
+        case .trending, .search, .coinsMarkets:
             return .get
         }
     }
@@ -30,12 +31,14 @@ enum CoingeckoNetworkAPI: BaseNetworkAPI {
             return nil
         case .search(let text):
             return ["query": text]
+        case .coinsMarkets(let text):
+            return ["vs_currency": "krw", "ids": text, "sparkline": "true"]
         }
     }
     
     var headers: HTTPHeaders? {
         switch self {
-        case .trending, .search:
+        case .trending, .search, .coinsMarkets:
             return nil
         }
     }
@@ -53,6 +56,8 @@ private extension CoingeckoNetworkAPI {
             return "search/trending"
         case .search:
             return "search"
+        case .coinsMarkets:
+            return "coins/markets"
         }
     }
 }
