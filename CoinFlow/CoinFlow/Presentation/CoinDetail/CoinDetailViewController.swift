@@ -14,10 +14,12 @@ import RxCocoa
 class CoinDetailViewController: UIViewController {
 
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout())
+    private let iconTitleView = IconTitleView()
     
     private var dataSource: DataSource!
     
     private let viewModel: CoinDetailViewModel
+    private let disposeBag = DisposeBag()
     
     init(viewModel: CoinDetailViewModel) {
         self.viewModel = viewModel
@@ -36,6 +38,22 @@ class CoinDetailViewController: UIViewController {
         configureConstraints()
         configureView()
         configureDataSource()
+        bind()
+    }
+    
+    private func bind() {
+        
+        let input = CoinDetailViewModel.Input()
+        let output = viewModel.transform(input: input)
+        
+        output.coinsMarket
+            .compactMap{ $0 }
+            .drive(with: self) { owner, coinsMaket in
+                owner.iconTitleView.rx.title.onNext(coinsMaket.symbol)
+                owner.iconTitleView.setImage(string: coinsMaket.image)
+                
+            }
+            .disposed(by: disposeBag)
     }
 }
 
@@ -45,6 +63,7 @@ private extension CoinDetailViewController {
     func configureView() {
         view.backgroundColor = CoinFlowColor.background
         navigationItem.backButtonTitle = ""
+        navigationItem.titleView = iconTitleView
     }
     
     func configureHierarchy() {
