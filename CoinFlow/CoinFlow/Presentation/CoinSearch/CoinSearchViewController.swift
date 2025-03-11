@@ -43,6 +43,16 @@ final class CoinSearchViewController: UIViewController {
         configureView()
         configrueDataSource()
         bind()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(favoriteButtonDidSave), name: NSNotification.Name("FavoriteButtonDidSave"), object: nil)
+    }
+    
+    @objc func favoriteButtonDidSave(_ notification: Notification) {
+        guard let message = notification.userInfo?["message"] as? String else {
+            print("Failed to get saving message")
+            return
+        }
+        self.view.makeToast(message, duration: 2.0, position: .bottom)
     }
     
     private func bind() {

@@ -7,6 +7,7 @@
 
 import UIKit
 
+import Toast
 import RxSwift
 import RxCocoa
 
@@ -16,7 +17,7 @@ final class FavoriteButton: UIButton {
     private var selectedConfiguration = UIButton.Configuration.plain()
     
     private var viewModel: FavoriteButtonViewModel?
-    var disposeBag = DisposeBag()
+    private var disposeBag = DisposeBag()
     
     init() {
         super.init(frame: .zero)
@@ -56,7 +57,12 @@ final class FavoriteButton: UIButton {
         output.selectedState
             .drive(rx.isSelected)
             .disposed(by: disposeBag)
-
+        
+        output.savingMessage
+            .drive(with: self) { owner, message in
+                NotificationCenter.default.post(name: NSNotification.Name("FavoriteButtonDidSave"), object: nil, userInfo: ["message": message])
+            }
+            .disposed(by: disposeBag)
     }
 }
 
