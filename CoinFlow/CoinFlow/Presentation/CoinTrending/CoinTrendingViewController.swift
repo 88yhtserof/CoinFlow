@@ -209,8 +209,8 @@ extension CoinTrendingViewController {
         
         switch section {
         case .searchKeyword:
-            supplementaryView.accessoryLabel.isHidden = false
-            supplementaryView.accessoryLabel.text = CoinDateFomatter.trending(Date()).string
+            let configuration = UIButton.Configuration.accessory(title: CoinDateFomatter.trending(Date()).string)
+            supplementaryView.accessoryButtonConfiguration = configuration
             supplementaryView.configure(with: "인기 검색어")
         case .nft:
             supplementaryView.configure(with: "인기 NFT")

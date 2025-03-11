@@ -192,12 +192,12 @@ extension CoinDetailViewController {
         case .chart:
             break
         case .coinInfo:
-            supplementaryView.accessoryLabel.isHidden = false
-            supplementaryView.accessoryLabel.text = "더보기"
+            let configuration = UIButton.Configuration.accessory(title: "더보기", image: "chevron.right")
+            supplementaryView.accessoryButtonConfiguration = configuration
             supplementaryView.configure(with: "종목정보")
         case .coinIndicator:
-            supplementaryView.accessoryLabel.isHidden = false
-            supplementaryView.accessoryLabel.text = "더보기"
+            let configuration = UIButton.Configuration.accessory(title: "더보기", image: "chevron.right")
+            supplementaryView.accessoryButtonConfiguration = configuration
             supplementaryView.configure(with: "투자지표")
         }
     }
