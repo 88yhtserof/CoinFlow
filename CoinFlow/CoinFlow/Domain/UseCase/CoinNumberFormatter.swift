@@ -12,6 +12,7 @@ enum CoinNumberFormatter {
     case changeRate(number: Double)
     case changePrice(number: Double)
     case accTradePrice(number: Double)
+    case currentPrice(number: Int)
     
     var string: String? {
         switch self {
@@ -23,6 +24,8 @@ enum CoinNumberFormatter {
             return CoinNumberFormatter.decimal(by: .changePrice(number as NSNumber))
         case .accTradePrice(let number):
             return CoinNumberFormatter.truncToMilions(number)
+        case .currentPrice(let number):
+            return CoinNumberFormatter.decimal(by: .standard(number as NSNumber))
         }
     }
 }
@@ -30,9 +33,16 @@ enum CoinNumberFormatter {
 //MARK: - Format
 private extension CoinNumberFormatter {
     enum FormatterType {
+        case standard(NSNumber)
         case tradePrice(NSNumber)
         case changePrice(NSNumber)
     }
+    
+    static let standardDecimalFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter
+    }()
     
     static let tradePriceFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -69,6 +79,8 @@ private extension CoinNumberFormatter {
     
     static func decimal(by formatter: FormatterType) -> String? {
         switch formatter {
+        case .standard(let number):
+            return CoinNumberFormatter.standardDecimalFormatter.string(from: number)
         case .tradePrice(let number):
             return CoinNumberFormatter.tradePriceFormatter.string(from: number)
         case .changePrice(let number):

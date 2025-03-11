@@ -12,7 +12,15 @@ import SnapKit
 final class HeaderSupplementaryView: UICollectionReusableView {
     
     private let titleLabel = UILabel()
-    let accessoryLabel = UILabel()
+    let accessoryButton = UIButton()
+    
+    var accessoryButtonConfiguration: UIButton.Configuration? {
+        get { accessoryButton.configuration }
+        set {
+            accessoryButton.isHidden = false
+            accessoryButton.configuration = newValue
+        }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -28,7 +36,7 @@ final class HeaderSupplementaryView: UICollectionReusableView {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        accessoryLabel.isHidden = true
+        accessoryButton.isHidden = true
     }
     
     func configure(with string: String) {
@@ -42,13 +50,11 @@ private extension HeaderSupplementaryView {
         titleLabel.textColor = CoinFlowColor.title
         titleLabel.font = .systemFont(ofSize: 16, weight: .heavy)
         
-        accessoryLabel.textColor = CoinFlowColor.subtitle
-        accessoryLabel.font = .systemFont(ofSize: 12, weight: .regular)
-        accessoryLabel.isHidden = true
+        accessoryButton.isHidden = true
     }
     
     private func configureHierarchy() {
-        addSubviews([titleLabel, accessoryLabel])
+        addSubviews([titleLabel, accessoryButton])
     }
     
     private func configureConstraints() {
@@ -56,9 +62,9 @@ private extension HeaderSupplementaryView {
             make.edges.equalToSuperview()
         }
         
-        accessoryLabel.snp.makeConstraints { make in
+        accessoryButton.snp.makeConstraints { make in
             make.centerY.equalTo(titleLabel)
-            make.trailing.equalToSuperview().inset(20)
+            make.trailing.equalToSuperview()
         }
     }
 }

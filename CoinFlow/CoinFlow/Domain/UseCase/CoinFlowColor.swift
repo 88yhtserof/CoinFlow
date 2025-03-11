@@ -20,4 +20,6 @@ enum CoinFlowColor {
     static let background: UIColor = .coinflowWhite
     
     static let subBackground: UIColor = .coinflowLightGray
+    
+    static let chart: UIColor = .coinflowBlue
 }

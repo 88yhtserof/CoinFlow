@@ -59,8 +59,10 @@ final class FavoriteButton: UIButton {
             .disposed(by: disposeBag)
         
         output.savingMessage
-            .drive(with: self) { owner, message in
+            .drive(with: self) { owner, value in
+                let (message, id) = value
                 NotificationCenter.default.post(name: NSNotification.Name("FavoriteButtonDidSave"), object: nil, userInfo: ["message": message])
+                NotificationCenter.default.post(name: NSNotification.Name("FavoriteButtonResult"), object: nil, userInfo: ["id": id, "result": owner.isSelected])
             }
             .disposed(by: disposeBag)
     }

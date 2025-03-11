@@ -15,9 +15,9 @@ final class CoinSearchContentCollectionViewCell: UICollectionViewCell, BaseColle
     
     static let identifier = String(describing: CoinListCollectionViewCell.self)
     
-    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout())
+    lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout())
     
-    private let disposeBag = DisposeBag()
+    private var disposeBag = DisposeBag()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,6 +34,8 @@ final class CoinSearchContentCollectionViewCell: UICollectionViewCell, BaseColle
     override func prepareForReuse() {
         super.prepareForReuse()
         collectionView.dataSource = nil
+        disposeBag = DisposeBag()
+        
     }
     
     func configure(with value: [CoingeckoSearchCoin]) {

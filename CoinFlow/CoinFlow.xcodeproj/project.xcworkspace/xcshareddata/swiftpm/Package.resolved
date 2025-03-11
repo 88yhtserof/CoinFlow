@@ -1,5 +1,5 @@
 {
-  "originHash" : "a33b6d8330c9d776ca718ae4c1fdab1fca916e43e25eb63626c3a489f0b726e3",
+  "originHash" : "5b01bd66850139427bd2f7b9ea459ae4b198707b688fa75c466680eb490611f3",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "513364f870f6bfc468f9d2ff0a95caccc10044c5",
         "version" : "5.10.2"
+      }
+    },
+    {
+      "identity" : "charts",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ChartsOrg/Charts.git",
+      "state" : {
+        "revision" : "dd9c72e3d7e751e769971092a6bd72d39198ae63",
+        "version" : "5.1.0"
       }
     },
     {

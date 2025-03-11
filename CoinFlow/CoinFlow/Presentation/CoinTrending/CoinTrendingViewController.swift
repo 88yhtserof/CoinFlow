@@ -33,9 +33,16 @@ final class CoinTrendingViewController: UIViewController {
     
     private func bind() {
         
+        let selectTrendingCoinItem = collectionView.rx.itemSelected
+            .withUnretained(self)
+            .compactMap { owner, indexPath in
+                owner.dataSource.itemIdentifier(for: indexPath)
+            }
+        
         let input = CoinTrendingViewModel.Input(loadView: rx.viewWillAppear,
                                                 searchText: searchBar.searchTextField.rx.text.orEmpty,
-                                                tapSearchButton: searchBar.rx.searchButtonClicked)
+                                                tapSearchButton: searchBar.rx.searchButtonClicked,
+                                                selectTrendingCoinItem: selectTrendingCoinItem)
         let output = viewModel.transform(input: input)
         
         output.searchedText
@@ -56,6 +63,15 @@ final class CoinTrendingViewController: UIViewController {
             .map{ _ in nil }
             .bind(to: searchBar.searchTextField.rx.text)
             .disposed(by: disposeBag)
+        
+        output.selectedTrendingCoin
+            .compactMap{ $0 }
+            .map { coin in
+                let viewModel = CoinDetailViewModel(id: coin.item.id)
+                return CoinDetailViewController(viewModel: viewModel)
+            }
+            .drive(rx.pushViewController)
+            .disposed(by: disposeBag)
     }
 }
 
@@ -67,7 +83,6 @@ private extension CoinTrendingViewController {
         navigationItem.leftBarButtonItem = TitleBarButtonItem(title: "가상자산 / 심볼 검색")
         navigationItem.backButtonTitle = ""
         
-        collectionView.register(TrendingSearchKeywordCollectionViewCell.self, forCellWithReuseIdentifier: TrendingSearchKeywordCollectionViewCell.identifier)
         collectionView.isScrollEnabled = false
     }
     
@@ -124,7 +139,7 @@ private extension CoinTrendingViewController {
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
         section.interGroupSpacing = 10
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: -10, trailing: -10)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)
         
         section.boundarySupplementaryItems = [headerSupplementaryItem()]
         
@@ -141,7 +156,7 @@ private extension CoinTrendingViewController {
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
         section.interGroupSpacing = 10
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 10, trailing: 10)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)
         
         section.boundarySupplementaryItems = [headerSupplementaryItem()]
         
@@ -209,8 +224,8 @@ extension CoinTrendingViewController {
         
         switch section {
         case .searchKeyword:
-            supplementaryView.accessoryLabel.isHidden = false
-            supplementaryView.accessoryLabel.text = CoinDateFomatter.trending(Date()).string
+            let configuration = UIButton.Configuration.accessory(title: CoinDateFomatter.trending(Date()).string)
+            supplementaryView.accessoryButtonConfiguration = configuration
             supplementaryView.configure(with: "인기 검색어")
         case .nft:
             supplementaryView.configure(with: "인기 NFT")

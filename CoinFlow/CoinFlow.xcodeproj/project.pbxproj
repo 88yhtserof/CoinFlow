@@ -12,6 +12,7 @@
 		141B64222D7BDFF30023934E /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 141B64212D7BDFF30023934E /* Alamofire */; };
 		142A52EB2D7F494F006989F8 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 142A52EA2D7F494F006989F8 /* RealmSwift */; };
 		142A541F2D7FB3A0006989F8 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = 142A541E2D7FB3A0006989F8 /* Toast */; };
+		142A56102D805793006989F8 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 142A560F2D805793006989F8 /* DGCharts */; };
 		145229BC2D79C6B300006917 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 145229BB2D79C6B300006917 /* SnapKit */; };
 		146DA6C12D7D7CC4004F17C1 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 146DA6C02D7D7CC4004F17C1 /* Kingfisher */; };
 /* End PBXBuildFile section */
@@ -46,6 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				142A56102D805793006989F8 /* DGCharts in Frameworks */,
 				142A52EB2D7F494F006989F8 /* RealmSwift in Frameworks */,
 				141B62992D7AC0070023934E /* RxSwift in Frameworks */,
 				141B64222D7BDFF30023934E /* Alamofire in Frameworks */,
@@ -102,6 +104,7 @@
 				146DA6C02D7D7CC4004F17C1 /* Kingfisher */,
 				142A52EA2D7F494F006989F8 /* RealmSwift */,
 				142A541E2D7FB3A0006989F8 /* Toast */,
+				142A560F2D805793006989F8 /* DGCharts */,
 			);
 			productName = CoinFlow;
 			productReference = 1452283A2D7998FB00006917 /* CoinFlow.app */;
@@ -138,6 +141,7 @@
 				146DA6BF2D7D7CC4004F17C1 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				142A52E92D7F494F006989F8 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				142A541D2D7FB3A0006989F8 /* XCRemoteSwiftPackageReference "Toast-Swift" */,
+				142A560E2D805793006989F8 /* XCRemoteSwiftPackageReference "Charts" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1452283B2D7998FB00006917 /* Products */;
@@ -417,6 +421,14 @@
 				minimumVersion = 5.1.1;
 			};
 		};
+		142A560E2D805793006989F8 /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ChartsOrg/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
 		145229BA2D79C6B300006917 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
@@ -460,6 +472,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 142A541D2D7FB3A0006989F8 /* XCRemoteSwiftPackageReference "Toast-Swift" */;
 			productName = Toast;
+		};
+		142A560F2D805793006989F8 /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 142A560E2D805793006989F8 /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
 		};
 		145229BB2D79C6B300006917 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -22,7 +22,7 @@ final class FavoriteButtonViewModel: BaseViewModel {
     
     struct Output {
         let selectedState: Driver<Bool>
-        let savingMessage: Driver<String>
+        let savingMessage: Driver<(String, String)>
     }
     
     private let id: String
@@ -39,7 +39,7 @@ final class FavoriteButtonViewModel: BaseViewModel {
     func transform(input: Input) -> Output {
         
         let selectedState = BehaviorRelay(value: false)
-        let savingMessage = PublishRelay<String>()
+        let savingMessage = PublishRelay<(String, String)>()
         
         input.selectButton
             .withLatestFrom(input.isSelectedState)
@@ -47,12 +47,13 @@ final class FavoriteButtonViewModel: BaseViewModel {
             .map { owner, isFavorite in
                 if isFavorite {
                     owner.repository.add(FavoriteTable(id: owner.id))
-                    return String(format: "%@이 즐겨찾기에 추가되었습니다.", owner.id)
+                    return (String(format: "%@이 즐겨찾기에 추가되었습니다.", owner.id), owner.id)
                 } else {
                     owner.repository.delete(FavoriteTable(id: owner.id))
-                    return String(format: "%@이 즐겨찾기에서 제거되었습니다.", owner.id)
+                    return (String(format: "%@이 즐겨찾기에서 제거되었습니다.", owner.id), owner.id)
                 }
-            }.bind(to: savingMessage)
+            }
+            .bind(to: savingMessage)
             .disposed(by: disposeBag)
         
         Observable<String>.just(id)
@@ -65,6 +66,6 @@ final class FavoriteButtonViewModel: BaseViewModel {
             .disposed(by: disposeBag)
         
         return Output(selectedState: selectedState.asDriver(),
-                      savingMessage: savingMessage.asDriver(onErrorJustReturn: ""))
+                      savingMessage: savingMessage.asDriver(onErrorJustReturn: ("", "")))
     }
 }
