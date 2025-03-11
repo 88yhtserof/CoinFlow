@@ -15,7 +15,7 @@ final class CoinSearchContentCollectionViewCell: UICollectionViewCell, BaseColle
     
     static let identifier = String(describing: CoinListCollectionViewCell.self)
     
-    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout())
+    lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout())
     
     private let disposeBag = DisposeBag()
     

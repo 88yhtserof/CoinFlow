@@ -54,6 +54,7 @@ final class CoinSearchViewController: UIViewController {
         }
         self.view.makeToast(message, duration: 2.0, position: .bottom)
     }
+    private var selectCoinItem: Observable<CoinSearchViewController.Item>?
     
     private func bind() {
         
@@ -68,6 +69,7 @@ final class CoinSearchViewController: UIViewController {
         output.searchedText
             .drive(searchTextField.rx.text)
             .disposed(by: disposeBag)
+        
     }
 }
 
@@ -232,6 +234,19 @@ extension CoinSearchViewController {
         switch item {
         case .coins(let list):
             cell.configure(with: list)
+            
+            // 검색 결과 아이템 선택
+            cell.collectionView.rx.itemSelected
+                .withUnretained(self)
+                .compactMap { owner, indexPath in
+                    owner.dataSource.itemIdentifier(for: indexPath)
+                }
+                .map { coin in
+                    return CoinDetailViewController()
+                }
+                .bind(to: rx.pushViewController)
+                .disposed(by: disposeBag)
+            
         case .nfts:
             cell.contentView.backgroundColor = CoinFlowColor.subtitle
         case .exchanges:
@@ -285,5 +300,11 @@ extension Reactive where Base: CoinSearchViewController {
     var searchButtonClicked: ControlEvent<Void> {
         let source = base.searchTextField.rx.controlEvent(.editingDidEnd)
         return ControlEvent(events: source)
+    }
+    
+    var pushViewController: Binder<UIViewController> {
+        return Binder(base) { base, vc in
+            base.navigationController?.pushViewController(vc, animated: true)
+        }
     }
 }
