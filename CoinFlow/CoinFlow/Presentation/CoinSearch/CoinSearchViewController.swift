@@ -54,7 +54,6 @@ final class CoinSearchViewController: UIViewController {
         }
         self.view.makeToast(message, duration: 2.0, position: .bottom)
     }
-    private var selectCoinItem: Observable<CoinSearchViewController.Item>?
     
     private func bind() {
         
