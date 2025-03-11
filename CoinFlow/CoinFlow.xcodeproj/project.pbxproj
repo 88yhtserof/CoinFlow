@@ -13,9 +13,24 @@
 		142A52EB2D7F494F006989F8 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 142A52EA2D7F494F006989F8 /* RealmSwift */; };
 		142A541F2D7FB3A0006989F8 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = 142A541E2D7FB3A0006989F8 /* Toast */; };
 		142A56102D805793006989F8 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 142A560F2D805793006989F8 /* DGCharts */; };
+		142A581D2D806F4F006989F8 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 142A52EA2D7F494F006989F8 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		145229BC2D79C6B300006917 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 145229BB2D79C6B300006917 /* SnapKit */; };
 		146DA6C12D7D7CC4004F17C1 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 146DA6C02D7D7CC4004F17C1 /* Kingfisher */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		142A581E2D806F4F006989F8 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				142A581D2D806F4F006989F8 /* RealmSwift in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1452283A2D7998FB00006917 /* CoinFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoinFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -87,6 +102,7 @@
 				145228362D7998FB00006917 /* Sources */,
 				145228372D7998FB00006917 /* Frameworks */,
 				145228382D7998FB00006917 /* Resources */,
+				142A581E2D806F4F006989F8 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
