@@ -42,6 +42,10 @@ enum CoingeckoNetworkAPI: BaseNetworkAPI {
             return nil
         }
     }
+    
+    var error: any NetworkError.Type {
+        return CoingeckoNetworkError.self
+    }
 }
 
 private extension CoingeckoNetworkAPI {

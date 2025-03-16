@@ -36,6 +36,10 @@ enum UpbitNetworkAPI: BaseNetworkAPI {
             return nil
         }
     }
+    
+    var error: any NetworkError.Type {
+        return UpbitError.self
+    }
 }
 
 private extension UpbitNetworkAPI {

@@ -15,4 +15,5 @@ protocol BaseNetworkAPI {
     var method: HTTPMethod { get }
     var parameters: Parameters? { get }
     var headers: HTTPHeaders? { get }
+    var error: NetworkError.Type { get }
 }
