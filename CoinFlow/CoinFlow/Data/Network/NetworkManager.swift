@@ -21,7 +21,7 @@ final class NetworkManager {
         
         return Single<T>.create { observer in
             guard let url = api.url else {
-                observer(.failure(NetworkError.invalidURL)) // 이후 에러 처리 필요
+                observer(.failure(NSError())) // 이후 에러 처리 필요
                 return Disposables.create()
             }
             
@@ -34,8 +34,10 @@ final class NetworkManager {
                 case .success(let value):
                     print("Success")
                     observer(.success(value))
-                case .failure(let error):
-                    print("Error")
+                case .failure(let afError):
+                    print("Error", afError)
+                    
+                    let error = api.error(response)
                     observer(.failure(error))
                 }
             }

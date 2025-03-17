@@ -15,5 +15,6 @@ protocol BaseNetworkAPI {
     var method: HTTPMethod { get }
     var parameters: Parameters? { get }
     var headers: HTTPHeaders? { get }
-    var error: NetworkError.Type { get }
+    
+    func error<T: Decodable>(_ response: DataResponse<T, AFError>) -> NetworkError
 }
