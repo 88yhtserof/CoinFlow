@@ -7,19 +7,31 @@
 
 import Foundation
 
-/*
- {
-   "error": {
-     "message": "<오류에 대한 설명>",
-     "name": "<오류 코드>"
-   }
- }
- */
+import Alamofire
 
 enum UpbitError: NetworkError {
-    case badRequest(ErrorCode)
-    case unauthorized(ErrorCode)
+    case badRequest(String)
+    case unauthorized(String)
     case unknown
+    
+    init?<T: Decodable>(_ statusCode: Int, errorResponse: DataResponse<T, AFError>) {
+        
+        guard let data = errorResponse.data,
+              let decoded = try? JSONDecoder().decode(UpbitErrorResponse.self, from: data) else {
+            print("Failed to decode error response")
+            return nil
+        }
+        let message = decoded.error.message
+        
+        switch statusCode {
+        case 400:
+            self = .badRequest(message)
+        case 401:
+            self = .unauthorized(message)
+        default:
+            self = .unknown
+        }
+    }
     
     var statusCode: Int? {
         switch self {
@@ -32,20 +44,28 @@ enum UpbitError: NetworkError {
         }
     }
     
-    private func getStatusCode(_ statusCode: Int) {
-        
-    }
-    
     var errorDescription: String? {
         switch self {
-        case .badRequest(let errorCode):
-            return errorCode.message
-        case .unauthorized(let errorCode):
-            return errorCode.message
+        case .badRequest:
+            return "잘못된 요청입니다.\n관리자에게 문의하십시오"
+        case .unauthorized:
+            return "권한이 없습니다.\n관리자에게 문의하십시오"
         case .unknown:
-            return "알 수 없는 오류입니다."
+            return "알 수 없는 오류입니다.\n관리자에게 문의하십시오"
         }
     }
+    
+    var errorLog: String {
+        switch self {
+        case .badRequest(let log):
+            return log
+        case .unauthorized(let log):
+            return log
+        case .unknown:
+            return "Unknown Error"
+        }
+    }
+    
 }
 
 extension UpbitError {

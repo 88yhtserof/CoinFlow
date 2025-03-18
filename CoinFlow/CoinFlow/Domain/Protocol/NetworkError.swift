@@ -12,4 +12,5 @@ protocol NetworkError where Self: LocalizedError {
     typealias ErrorDescription = String
     
     var statusCode: Int? { get }
+    var errorLog: String { get }
 }

@@ -7,16 +7,49 @@
 
 import Foundation
 
+import Alamofire
+
 enum CoingeckoNetworkError: NetworkError {
-    case badRequest
-    case unauthorized
-    case forbidden
-    case tooManyRequests
-    case internalServerError
-    case serviceUnavailable
-    case accessDenied
-    case apiKeyMissing
+    case badRequest(String)
+    case unauthorized(String)
+    case forbidden(String)
+    case tooManyRequests(String)
+    case internalServerError(String)
+    case serviceUnavailable(String)
+    case accessDenied(String)
+    case apiKeyMissing(String)
     case unknown
+    
+    init?<T: Decodable>(_ statusCode: Int, response: DataResponse<T, AFError>) {
+        
+        guard let data = response.data,
+              let decoded = try? JSONDecoder().decode(CoingeckoErrorResponse.self, from: data) else {
+            print("Failed to decode error response")
+            return nil
+        }
+        let message = decoded.error.error_message
+        
+        switch statusCode {
+        case 400:
+            self = .badRequest(message)
+        case 401:
+            self = .unauthorized(message)
+        case 403:
+            self = .forbidden(message)
+        case 429:
+            self = .tooManyRequests(message)
+        case 500:
+            self = .internalServerError(message)
+        case 503:
+            self = .serviceUnavailable(message)
+        case 1020:
+            self = .accessDenied(message)
+        case 10002:
+            self = .apiKeyMissing(message)
+        default:
+            self = .unknown
+        }
+    }
     
     var statusCode: Int? {
         switch self {
@@ -43,6 +76,29 @@ enum CoingeckoNetworkError: NetworkError {
     
     var errorDescription: String? {
         return message
+    }
+    
+    var errorLog: String {
+        switch self {
+        case .badRequest(let log):
+            return log
+        case .unauthorized(let log):
+            return log
+        case .forbidden(let log):
+            return log
+        case .tooManyRequests(let log):
+            return log
+        case .internalServerError(let log):
+            return log
+        case .serviceUnavailable(let log):
+            return log
+        case .accessDenied(let log):
+            return log
+        case .apiKeyMissing(let log):
+            return log
+        case .unknown:
+            return "Unknown Error"
+        }
     }
     
 }
@@ -72,12 +128,3 @@ extension CoingeckoNetworkError: LocalizedError {
         }
     }
 }
-
-/*
- {
-     "status": {
-         "error_code": 429,
-         "error_message": "You've exceeded the Rate Limit. Please visit https://www.coingecko.com/en/api/pricing to subscribe to our API plans for higher rate limits."
-     }
- }
- */

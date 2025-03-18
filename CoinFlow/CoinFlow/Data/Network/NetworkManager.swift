@@ -35,9 +35,8 @@ final class NetworkManager {
                     print("Success")
                     observer(.success(value))
                 case .failure(let afError):
-                    print("Error", afError)
-                    
                     let error = api.error(response)
+                    print("Error: \(error.errorLog)", afError, separator: "\n")
                     observer(.failure(error))
                 }
             }
