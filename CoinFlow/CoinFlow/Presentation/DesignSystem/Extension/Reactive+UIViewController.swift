@@ -21,4 +21,13 @@ extension Reactive where Base: UIViewController {
       let source = self.methodInvoked(#selector(Base.viewWillDisappear)).map { _ in () }
       return ControlEvent(events: source)
     }
+    
+    var showErrorAlert: Binder<NetworkError.ErrorDescription> {
+        return Binder(base) { base, value in
+            let alert = UIAlertController(title: "오류", message: value, preferredStyle: .alert)
+            let action = UIAlertAction(title: "확인", style: .default)
+            alert.addAction(action)
+            base.present(alert, animated: true)
+        }
+    }
 }
