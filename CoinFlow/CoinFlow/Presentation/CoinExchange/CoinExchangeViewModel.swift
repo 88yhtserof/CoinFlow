@@ -19,6 +19,7 @@ final class CoinExchangeViewModel: BaseViewModel {
     
     struct Output {
         let sortedMarketList: Driver<[MarketTickerResponse]>
+        let errorMessage: Driver<String>
     }
     
     var disposeBag = DisposeBag()
@@ -36,15 +37,19 @@ final class CoinExchangeViewModel: BaseViewModel {
         let selectedSort = BehaviorRelay<ExchangeBar.Sort>(value: .accTradePrice(.desc))
         let marketList = BehaviorRelay<[MarketTickerResponse]>(value: [])
         let sortedMarketList = BehaviorRelay<[MarketTickerResponse]>(value: [])
+        let errorMessage = PublishRelay<String>()
         
         let timer = Observable<Int>
             .timer(.seconds(5), period: .seconds(5), scheduler: MainScheduler.asyncInstance)
         
         Observable<Void>
             .merge(input.loadView.asObservable(), timer.map{_ in Void() })
-            .withUnretained(self)
-            .flatMap { owner, _ in
-                owner.requestMarketTicker()
+            .flatMap { _ in
+                NetworkManager.shared.request(api: UpbitNetworkAPI.ticker)
+                    .catch { error in
+                        errorMessage.accept(error.localizedDescription)
+                        return Single.just([])
+                    }
             }
             .debug("load view")
             .bind(to: marketList)
@@ -72,16 +77,8 @@ final class CoinExchangeViewModel: BaseViewModel {
             .bind(to: sortedMarketList)
             .disposed(by: disposeBag)
         
-        return Output(sortedMarketList: sortedMarketList.asDriver())
-    }
-    
-    func requestMarketTicker() -> Single<[MarketTickerResponse]> {
-        NetworkManager.shared.request(api: UpbitNetworkAPI.ticker)
-            .debug("upbit ticker request")
-            .catch { error in
-                print("Error", error)
-                return Single.just([])
-            }
+        return Output(sortedMarketList: sortedMarketList.asDriver(),
+                      errorMessage: errorMessage.asDriver(onErrorJustReturn: ""))
     }
     
     func sortedTickers(by sort: ExchangeBar.Sort, with list: [MarketTickerResponse]) -> [MarketTickerResponse] {

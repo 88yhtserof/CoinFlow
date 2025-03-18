@@ -39,6 +39,10 @@ final class CoinExchangeViewController: UIViewController {
                 cell.configure(with: element)
             }
             .disposed(by: disposeBag)
+        
+        output.errorMessage
+            .drive(rx.showErrorAlert)
+            .disposed(by: disposeBag)
     }
 }
 
