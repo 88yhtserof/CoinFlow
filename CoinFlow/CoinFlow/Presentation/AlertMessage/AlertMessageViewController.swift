@@ -8,6 +8,8 @@
 import UIKit
 
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class AlertMessageViewController: UIViewController {
     
@@ -30,12 +32,24 @@ final class AlertMessageViewController: UIViewController {
     
     var buttonHandler: (() -> Void)?
     
+    private let networkMonitor = NetworkMonitor()
+    private let disposeBag = DisposeBag()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         configureHierarchy()
         configureConstraints()
         configureView()
+        
+        button.rx.tap
+            .withLatestFrom(networkMonitor.isConnected)
+            .bind(with: self) { owner, isConnected in
+                if isConnected {
+                    owner.dismiss(animated: true)
+                }
+            }
+            .disposed(by: disposeBag)
     }
     
     @objc private func didButtonTapped() {
