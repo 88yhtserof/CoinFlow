@@ -36,6 +36,14 @@ enum UpbitNetworkAPI: BaseNetworkAPI {
             return nil
         }
     }
+    
+    func error<T: Decodable>(_ response: DataResponse<T, AFError>) -> NetworkError {
+        guard let statusCode = response.response?.statusCode else {
+            print("Falied to get statusCode")
+            return UpbitError.unknown
+        }
+        return UpbitError(statusCode, errorResponse: response) ?? .unknown
+    }
 }
 
 private extension UpbitNetworkAPI {

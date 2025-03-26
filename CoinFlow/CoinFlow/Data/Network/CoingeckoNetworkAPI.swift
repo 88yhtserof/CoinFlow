@@ -42,6 +42,14 @@ enum CoingeckoNetworkAPI: BaseNetworkAPI {
             return nil
         }
     }
+    
+    func error<T: Decodable>(_ response: DataResponse<T, AFError>) -> NetworkError {
+        guard let statusCode = response.response?.statusCode else {
+            print("Falied to get statusCode")
+            return UpbitError.unknown
+        }
+        return CoingeckoNetworkError(statusCode, response: response) ?? .unknown
+    }
 }
 
 private extension CoingeckoNetworkAPI {
