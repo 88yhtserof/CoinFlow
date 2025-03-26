@@ -41,7 +41,17 @@ final class CoinExchangeViewController: UIViewController {
             .disposed(by: disposeBag)
         
         output.errorMessage
-            .drive(rx.showErrorAlert)
+            .map({ value in
+                let (message, handler) = value
+                let alertMessageVC = AlertMessageViewController()
+                alertMessageVC.message = message
+                alertMessageVC.buttonTitle = "다시 시도하기"
+                alertMessageVC.buttonHandler = handler
+                alertMessageVC.modalPresentationStyle = .overCurrentContext
+                alertMessageVC.modalTransitionStyle = .crossDissolve
+                return alertMessageVC
+            })
+            .drive(rx.present)
             .disposed(by: disposeBag)
     }
 }
@@ -83,6 +93,16 @@ private extension CoinExchangeViewController {
             let section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: environment)
             section.interGroupSpacing = 10
             return section
+        }
+    }
+}
+
+//MARK: - Reactive
+extension Reactive where Base: CoinExchangeViewController {
+    
+    var present: Binder<UIViewController> {
+        return Binder(base) { base, vc in
+            base.present(vc, animated: true)
         }
     }
 }

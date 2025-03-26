@@ -32,7 +32,6 @@ final class AlertMessageViewController: UIViewController {
     
     var buttonHandler: (() -> Void)?
     
-    private let networkMonitor = NetworkMonitor()
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
@@ -41,19 +40,22 @@ final class AlertMessageViewController: UIViewController {
         configureHierarchy()
         configureConstraints()
         configureView()
+        bind()
+    }
+    
+    func bind() {
         
         button.rx.tap
-            .withLatestFrom(networkMonitor.isConnected)
+            .withLatestFrom(NetworkMonitorManager.shared.isConnected)
             .bind(with: self) { owner, isConnected in
                 if isConnected {
+                    owner.buttonHandler?()
                     owner.dismiss(animated: true)
+                } else {
+                    owner.view.makeToast("네트워크 연결이 일시적으로 원활하지 않습니다. 데이터 또는 Wi-Fi 연결 상태를 확인해주세요.")
                 }
             }
             .disposed(by: disposeBag)
-    }
-    
-    @objc private func didButtonTapped() {
-        buttonHandler?()
     }
 }
 
@@ -83,7 +85,6 @@ private extension AlertMessageViewController {
         alertStackView.alignment = .fill
         
         button.setTitleColor(CoinFlowColor.title, for: .normal)
-        button.addTarget(self, action: #selector(didButtonTapped), for: .touchUpInside)
     }
     
     func configureHierarchy() {
