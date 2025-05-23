@@ -70,7 +70,7 @@
 
 | 실시간 차트 | 인기 코인·NFT | 검색 및 즐겨찾기 | 상세 | 네트워크 안내 메시지 |
 |:--:|:--:|:--:|:--:|:--:|
-| ![차트](https://github.com/user-attachments/assets/df76cf36-57da-47de-b0e1-dfb2e8a6681a)) | ![인기](https://github.com/user-attachments/assets/eb727141-6b27-4ec2-afa0-dcc4812e45ce) | ![검색 및 즐겨찾기](https://github.com/user-attachments/assets/994a8d45-326c-4cff-954b-c837fe0b7a6a) | ![상세](https://github.com/user-attachments/assets/e11ba6ae-fb9a-4213-8b44-3745911ea74e) | ![네트워크](https://github.com/user-attachments/assets/81687130-a1ac-44bc-a38f-decb2e23f9ad) |
+| ![차트](https://github.com/user-attachments/assets/df76cf36-57da-47de-b0e1-dfb2e8a6681a) | ![인기](https://github.com/user-attachments/assets/eb727141-6b27-4ec2-afa0-dcc4812e45ce) | ![검색 및 즐겨찾기](https://github.com/user-attachments/assets/994a8d45-326c-4cff-954b-c837fe0b7a6a) | ![상세](https://github.com/user-attachments/assets/e11ba6ae-fb9a-4213-8b44-3745911ea74e) | ![네트워크](https://github.com/user-attachments/assets/81687130-a1ac-44bc-a38f-decb2e23f9ad) |
 
 
 
